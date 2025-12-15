@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# R
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj
+
+# Nextflow
+.nextflow/
+work/
+*.log
+*.trace
+.nf-test/
+
+# Results and outputs
+results/
+outputs/
+*.html
+
+# Temporary files
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Large data files (tracked via Git LFS, but ignore if not using LFS)
+# Uncomment if you want to ignore these locally but track via LFS
+# datasets/demo/**/*.idat
+# datasets/demo/**/*.bpm
+# datasets/demo/**/*.egt
+

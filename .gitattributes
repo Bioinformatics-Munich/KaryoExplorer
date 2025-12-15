@@ -1,0 +1,28 @@
+# Git LFS configuration for large files
+# Track large binary files and datasets with Git LFS
+
+# Demo dataset files (Illumina data)
+datasets/demo/** filter=lfs diff=lfs merge=lfs -text
+
+# Large data files
+*.idat filter=lfs diff=lfs merge=lfs -text
+*.bpm filter=lfs diff=lfs merge=lfs -text
+*.egt filter=lfs diff=lfs merge=lfs -text
+*.csv filter=lfs diff=lfs merge=lfs -text
+*.txt filter=lfs diff=lfs merge=lfs -text
+*.ped filter=lfs diff=lfs merge=lfs -text
+*.map filter=lfs diff=lfs merge=lfs -text
+*.bed filter=lfs diff=lfs merge=lfs -text
+*.bim filter=lfs diff=lfs merge=lfs -text
+*.fam filter=lfs diff=lfs merge=lfs -text
+
+# Archive files (if you decide to use zip)
+*.zip filter=lfs diff=lfs merge=lfs -text
+*.tar.gz filter=lfs diff=lfs merge=lfs -text
+*.tar filter=lfs diff=lfs merge=lfs -text
+
+# Large image files
+*.png filter=lfs diff=lfs merge=lfs -text
+*.jpg filter=lfs diff=lfs merge=lfs -text
+*.pdf filter=lfs diff=lfs merge=lfs -text
+
