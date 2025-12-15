@@ -1,0 +1,32 @@
+# Configuration file for preprocessing before pipeline execution
+# Edit these paths according to your data location
+
+# ============================================================================
+# STEP 1: Sample Table Generation from Excel
+# ============================================================================
+
+sample_table_generation:
+
+  # Input: Path to the original Excel file (SOURCE OF TRUTH)
+
+  input_excel: "input_excel.xlsx"
+  
+  # Output: Generated sample data table file name
+  output_file: "sample_sheet.xls"
+
+# ============================================================================
+# STEP 2: Sample Name Validation
+# ============================================================================
+
+sample_validation:
+  # Note: The output file from Step 1 (sample_table_generation.output_file) 
+  # will automatically be used as the reference for validation
+  
+  # Input: Full Data Table to validate
+  full_data_table: " /data/ProjectName/Full Data Table.txt"
+  
+  # Input: Samples Table to validate
+  samples_table: "/data/ProjectName/Samples Table.txt"
+  
+  # Output: Directory where corrected files will be saved (when applying corrections)
+  corrected_output_dir: "/data/ProjectName/corrected"
