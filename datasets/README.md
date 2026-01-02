@@ -21,5 +21,10 @@ The Illumina Global Screening Array v4.0 demo dataset is stored in `datasets/dem
 
 - **Git LFS Required**: This dataset uses Git Large File Storage (LFS). Make sure Git LFS is installed before cloning.
 - **Installation**: If you haven't installed Git LFS, see the [Git LFS Setup Guide](../docs/Git_LFS_Setup.md)
-- **Download**: After cloning, run `git lfs pull` to download the actual files
+- **Optional Download**: The demo dataset is configured to NOT download by default. To download it when needed:
+  ```bash
+  # Download the demo dataset
+  git lfs fetch --include="datasets/demo/**"
+  git lfs checkout datasets/demo/
+  ```
 - **Usage**: See the [Illumina Demo Dataset Guide](../docs/illumina_demo_dataset_guide.pdf) for detailed instructions
