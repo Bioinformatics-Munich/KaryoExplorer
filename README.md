@@ -1,4 +1,4 @@
-# KaryoPlayground: Interactive Pipeline for Digital Karyotyping with CNV and LoH Detection
+# KaryoExplorer: Interactive Pipeline for Digital Karyotyping with CNV and LoH Detection
 
 [![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A524.10.0-23aa62.svg)](https://www.nextflow.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -7,7 +7,7 @@
 [![Run with Docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
 [![Run with Singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
 
-A Nextflow-based, containerized pipeline for copy number variation (CNV) and loss of heterozygosity (LoH) analysis from Illumina genotyping arrays, with interactive HTML-based visualization through KaryoPlayground.
+A Nextflow-based, containerized pipeline for copy number variation (CNV) and loss of heterozygosity (LoH) analysis from Illumina genotyping arrays, with interactive HTML-based visualization through KaryoExplorer.
 
 ---
 
@@ -15,7 +15,7 @@ A Nextflow-based, containerized pipeline for copy number variation (CNV) and los
 
 Induced pluripotent stem cells (iPSCs) require routine genomic screening for copy number variations and loss of heterozygosity to ensure quality and safety. Current workflows are fragmented, requiring multiple tools, manual data manipulation, and non-shareable visualizations.
 
-**KaryoPlayground** standardizes this workflow into a single, reproducible pipeline that:
+**KaryoExplorer** standardizes this workflow into a single, reproducible pipeline that:
 - Performs CNV and LoH analysis from Illumina genotyping array data
 - Detects copy-neutral LoH (cnLoH) by overlaying runs of homozygosity with copy number states
 - Generates self-contained, interactive HTML reports with synchronized BAF/LRR/CN visualizations
@@ -41,7 +41,7 @@ Induced pluripotent stem cells (iPSCs) require routine genomic screening for cop
 - **cnLoH Classification**: Automatic detection of copy-neutral LoH (CN=2 ∩ ROH) and copy-loss LoH (CN<2 ∩ ROH)
 - **Quality Control**: Comprehensive QC metrics, IBD analysis, and sample matching
 
-### Interactive Visualization (KaryoPlayground)
+### Interactive Visualization (KaryoExplorer)
 - **Multi-page HTML application**: Genome-wide karyograms with synchronized chromosome views
 - **Interactive plots**: Pan-and-zoom BAF/LRR/CN tracks with Bokeh integration
 - **cnLoH highlighting**: Visual identification of candidate copy-neutral LoH regions
@@ -70,7 +70,7 @@ Digital karyotyping of iPSC lines is widely practiced, but current workflows suf
 - Struggle with result sharing and reproducibility
 - Lack integrated visualization of BAF, LRR, and copy number states
 
-**KaryoPlayground addresses these challenges by:**
+**KaryoExplorer addresses these challenges by:**
 1. **Standardizing analysis**: Single pipeline from raw data to publication-ready results
 2. **Integrating interpretation**: Unified visualization of CNV, LoH, and cnLoH in context
 3. **Enabling collaboration**: Self-contained HTML reports sharable via email or web
@@ -78,7 +78,7 @@ Digital karyotyping of iPSC lines is widely practiced, but current workflows suf
 
 ### Comparison with Existing Tools
 
-| Feature | KaryoPlayground | PennCNV/QuantiSNP | GenomeStudio | ASCAT |
+| Feature | KaryoExplorer | PennCNV/QuantiSNP | GenomeStudio | ASCAT |
 |---------|----------------|-------------------|--------------|--------|
 | Open source | Yes | Yes | No | Yes |
 | Paired analysis | Yes | Limited | Limited | Yes (cancer-focused) |
@@ -187,7 +187,7 @@ gsplink: '/path/to/PLINK_directory'        # Directory containing .ped and .map 
 outdir: './results'
 
 # Application Branding (optional)
-app_name: 'KaryoPlayground' "controls resulted folder names for 5.0-5.2"
+app_name: 'KaryoExplorer' "controls resulted folder names for 5.0-5.2"
 email_helmholtz: 'your-contact@institution.edu'
 email_analyst: 'analyst@institution.edu'  # Optional
 name_analyst: 'Your Name'                 # Optional
@@ -245,16 +245,16 @@ results/
 ├── 4.0_roh_loh_analysis/                    # ROH/LoH detection
 │   ├── 4.1_roh_loh_single/                  # Single sample results
 │   └── 4.2_roh_loh_paired/                  # Paired sample results
-├── 5.0_KaryoPlayground_preprocessing/       # Data for visualization
-├── 5.1_KaryoPlayground_unpaired/            # Interactive single results
-│   └── KaryoPlayground.html                 # Main application (single)
-└── 5.2_KaryoPlayground_paired/              # Interactive paired results
-    └── KaryoPlayground.html                 # Main application (paired)
+├── 5.0_KaryoExplorer_preprocessing/       # Data for visualization
+├── 5.1_KaryoExplorer_single/            # Interactive single results
+│   └── KaryoExplorer.html                 # Main application (single)
+└── 5.2_KaryoExplorer_paired/              # Interactive paired results
+    └── KaryoExplorer.html                 # Main application (paired)
 ```
 
 ### Accessing Interactive Results
 
-Open `results/5.1_KaryoPlayground_unpaired/KaryoPlayground.html` or `results/5.2_KaryoPlayground_paired/KaryoPlayground.html` in a modern web browser (Chrome/Firefox recommended).
+Open `results/5.1_KaryoExplorer_single/KaryoExplorer.html` or `results/5.2_KaryoExplorer_paired/KaryoExplorer.html` in a modern web browser (Chrome/Firefox recommended).
 
 **Features:**
 - Navigate between samples and chromosomes
@@ -300,7 +300,7 @@ The demo dataset allows you to:
 ## Performance Benchmarks
 
 **Actual Performance** (from demo_36 dataset):
-- **36 samples** (6 paired + 24 unpaired): ~6-7 minutes (with parallel processing)
+- **36 samples** (6 paired + 24 single): ~6-7 minutes (with parallel processing)
 - **Parallelization**: Sample-level processes run in parallel; execution time is determined by the longest-running process, not cumulative sample count
 - **Cluster**: SLURM with normal queue (1 CPU per task)
 
@@ -345,11 +345,11 @@ Comprehensive documentation is available in the `docs/` directory:
 
 ## Citation
 
-If you use KaryoPlayground in your research, please cite:
+If you use KaryoExplorer in your research, please cite:
 
 ```bibtex
-@article{karyoplayground2025,
-  title={KaryoPlayground: Interactive Pipeline for Digital Karyotyping with CNV and LoH Detection},
+@article{KaryoExplorer2025,
+  title={KaryoExplorer: Interactive Pipeline for Digital Karyotyping with CNV and LoH Detection},
   author={Dura, Ugur and Pastor, Xavier and Walzthoeni, Thomas and Boos, Alena},
   journal={Journal of Open Source Software},
   year={2025},
@@ -496,7 +496,7 @@ Full dependency specifications with exact versions are available in the `env/` d
 
 --> Pre-built containers can be included ???
 
-- **Docker Hub**: `username/karyoplayground:latest`
+- **Docker Hub**: `username/KaryoExplorer:latest`
 
 ---
 
