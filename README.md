@@ -97,60 +97,113 @@ Digital karyotyping of iPSC lines is widely practiced, but current workflows suf
 - **Nextflow** ≥ 24.10.0 ([install guide](https://www.nextflow.io/docs/latest/getstarted.html))
 - **Java** ≥ 11
 - **Conda**, **Docker**, or **Singularity** for containerization
-- **Computing cluster** (recommended for large datasets)
 
 ### Quick Setup
 
+**Option 1: System-wide Installation (Recommended)**
 ```bash
-# Install Nextflow (if not already installed)
+# 1. Install Nextflow
 curl -s https://get.nextflow.io | bash
 sudo mv nextflow /usr/local/bin/
 
-# Clone the repository
-git clone https://github.com/yourusername/pipeline_digital_karyotyping.git
-cd pipeline_digital_karyotyping
+# 2. Clone the repository
+git clone https://github.com/Bioinformatics-Munich/KaryoExplorer.git
+cd KaryoExplorer
 
-# Test installation
+# 3. Test installation
 nextflow run main.nf --help
+
+# 4. Run pipeline (Nextflow automatically manages all dependencies)
+nextflow run main.nf -params-file my_project.yaml -profile conda
 ```
+
+**Option 2: Conda Environment Setup**
+```bash
+# 1. Clone the repository
+git clone https://github.com/Bioinformatics-Munich/KaryoExplorer.git
+cd KaryoExplorer
+
+# 2. Create environment with Nextflow and Java
+conda env create -f env/karyoexplorer.yaml
+conda activate karyoexplorer
+
+# 3. Test installation
+nextflow run main.nf --help
+
+# 4. Run pipeline (Nextflow automatically manages all other dependencies)
+nextflow run main.nf -params-file my_project.yaml -profile conda
+```
+
+### How Dependencies Are Managed
+
+When you run the pipeline with `-profile conda`, Nextflow automatically:
+1. Creates separate conda environments for each pipeline component
+2. Installs all required bioinformatics tools, Python libraries, and R packages
+3. Manages environment activation/deactivation during execution
+
+**You only need to install:**
+- Nextflow ≥ 24.10.0
+- Java ≥ 11
+- Conda (for environment management)
+
+**Nextflow automatically installs:**
+- Bioinformatics tools (bcftools, vcftools, PLINK, bedtools)
+- Python libraries (pandas, numpy, bokeh, biopython)
+- R packages (ggplot2, data.table, ComplexHeatmap)
+- Documentation tools (pandoc)
+
+**System Requirements:**
+- Nextflow ≥ 24.10.0
+- Java ≥ 11
+- Conda, Docker, or Singularity
+- Minimum: 4 CPU cores, 16 GB RAM, 50 GB storage
+- Recommended: HPC cluster for large datasets
+
+For detailed installation instructions, environment setup, and cluster configuration, see **[How_to_run.md](docs/How_to_run.md)**
 
 ---
 
-## Usage
+## Quick Start
 
-### 1. Data Preparation
+### Prerequisites
 
-#### GenomeStudio Exports
+- **Nextflow** ≥ 24.10.0 ([install guide](https://www.nextflow.io/docs/latest/getstarted.html))
+- **Java** ≥ 11
+- **Conda**, **Docker**, or **Singularity** for containerization
 
-Export the following files from Illumina GenomeStudio:
-- **Full Data Table** (all samples, all SNPs)
-- **Samples Table** (sample metadata)
-- **SNP Table** (marker information)
-- **PLINK files** (`.ped` and `.map` format)
+A detailed guide for testing the pipeline with the demo dataset is provided: **[Illumina Demo Dataset Guide (PDF)](docs/illumina_demo_dataset_guide.pdf)**. You can test go through the guide and prepare and preprocess your own Illumina Infinnium Array output data in similar way. 
+
+**Guide Contents:**
+1. **Data Acquisition**: Understanding the Illumina Global Screening Array v4.0 demo data
+2. **GenomeStudio Processing**: Project setup, sample sheets, data export
+3. **Pipeline Execution**: Pre-configured parameters and step-by-step instructions
+4. **Results Interpretation**: Example outputs and validation
 
 #### Sample Pairing File
 
-Generate the sample pairing file using preprocessing tools:
-
-```bash
-cd preprocessing/
-# Edit preprocessing_config.yaml with your file paths
-./preprocessing_run.sh
-```
+Create a sample pairing file that defines the analysis strategy for your samples. This file specifies which samples should be analyzed individually (single analysis) and which should be compared against reference samples (paired analysis).
 
 **Sample pairing file format** (`sample_sheet.xls`):
 ```tsv
 Sample          Reference
-iPSC_clone1     Donor_material1    # Paired analysis
-iPSC_clone2     Donor_material2    # Paired analysis
-iPSC_clone2     iPSC_clone2        # Single analysis
-Control_sample  None               # Single analysis
+iPSC_clone1     Donor_material1    # Paired: compare iPSC_clone1 vs Donor_material1
+iPSC_clone2     Donor_material2    # Paired: compare iPSC_clone2 vs Donor_material2
+iPSC_clone1     iPSC_clone1        # Single: analyze iPSC_clone1 independently
+iPSC_clone2     iPSC_clone2        # Single: analyze iPSC_clone2 independently
+Donor_material1 Donor_material1    # Single: analyze Donor_material1 independently
+Donor_material2 Donor_material2    # Single: analyze Donor_material2 independently
 ```
 
-The preprocessing script:
-- Validates sample names across all input files
-- Detects and corrects naming inconsistencies
-- Generates the required pairing file
+**Important Requirements:**
+- **Tab-separated format**: Use tabs (not spaces) between Sample and Reference columns
+- **Header required**: First line must contain `Sample` and `Reference` column headers
+- **Paired analysis**: Sample name differs from Reference name (e.g., `iPSC_clone1` vs `Donor_material1`)
+- **Single analysis**: Sample name matches Reference name (e.g., `iPSC_clone1` vs `iPSC_clone1`)
+- **Complete coverage**: All samples used in paired analysis must also be included as single analysis entries
+
+**Analysis Types:**
+- **Paired Analysis**: Detects differential copy number changes between sample and reference (e.g., somatic variants in clones vs donor)
+- **Single Analysis**: Identifies absolute copy number variants in individual samples based on expected base copy number. For further details, please see bcftools cnv detection algorithm. 
 
 ### 2. Configuration
 
@@ -267,28 +320,58 @@ Open `results/5.1_KaryoExplorer_single/KaryoExplorer.html` or `results/5.2_Karyo
 
 ---
 
-## Example Dataset
+## Illumina Demo Dataset
 
-A detailed guide for testing the pipeline with Illumina's publicly available demo dataset is provided: **[Illumina Demo Dataset Guide (PDF)](docs/illumina_demo_dataset_guide.pdf)**
+KaryoExplorer includes a pre-processed demo dataset from Illumina's Global Screening Array v4.0, stored using Git LFS.
 
-### Guide Contents
+### Downloading the Demo Dataset
 
-1. **Data Acquisition**: Downloading Illumina Global Screening Array v4.0 demo data
-2. **GenomeStudio Processing**: Project setup, sample sheets, data export
-3. **Pipeline Execution**: Pre-configured parameters and step-by-step instructions
-4. **Results Interpretation**: Example outputs and validation
+By default, the demo dataset is **not downloaded** during repository only pointers are created under the 'datasets/demo/' directory. The demo data files are tracked with Git LFS and can be optionally downloaded when needed.
+
+**To download the demo dataset:**
+
+```bash
+# After cloning the repository
+cd KaryoExplorer
+
+# Download the demo data (~2 GB)
+git lfs pull --include="datasets/demo/**"
+```
+
+**To verify the download:**
+
+```bash
+# Check file sizes - LFS pointers are ~134 bytes, actual files are much larger
+ls -lh datasets/demo/*.csv
+
+# After download, files should show actual sizes (~2 GB)
+```
+
+### Demo Dataset Contents
+
+The `datasets/demo/` directory includes:
+- Illumina GSA v4.0 array manifest files (.bpm, .egt, .csv)
+- Sample sheets and annotation files
+- PLINK format data files (.ped, .map)
+- Full data tables and SNP information
 
 ### Using the Demo Dataset
 
+**Quick Start with Demo Data:**
+
 ```bash
-# 1. Download Illumina GSA demo data (see PDF guide)
-# 2. Process in GenomeStudio (see PDF guide)
-# 3. Collect all required data and organize them
-# 4. Run pipeline with your adjusted params.yaml file 
+# 1. Download the demo dataset (if not already done)
+git lfs pull --include="datasets/demo/**"
+
+# 2. Process in GenomeStudio (see PDF guide for details)
+
+# 3. Organize your processed data according to pipeline requirements
+
+# 4. Run pipeline with demo parameters
 nextflow run main.nf -params-file templates/demo_params.yaml -profile conda
 ```
 
-The demo dataset allows you to:
+**The demo dataset allows you to:**
 - Validate installation and environment
 - Test the complete workflow end-to-end
 - Understand input/output formats
@@ -483,7 +566,20 @@ Describe:
 **Documentation:**
 - Pandoc ≥ 2.19 - Report generation
 
-Full dependency specifications with exact versions are available in the `env/` directory conda environment files. Pipeline is also capable to create required environments based on these env configs during the runtime. 
+### Environment Management
+
+**Quick Setup Environment:**
+- `env/karyoexplorer.yaml` - Minimal environment with Nextflow and Java
+- Only prerequisites needed to run the pipeline
+- Install with: `conda env create -f env/karyoexplorer.yaml`
+
+**Automatic Dependency Management:**
+- Nextflow automatically creates modular environments during execution
+- Individual component environments: `bokeh.yaml`, `ibd.yaml`, `pandoc.yaml`, `preproc.yaml`, `renv.yaml`
+- Each environment is activated only when needed
+- No manual intervention required
+
+Full dependency specifications with exact versions are available in the `env/` directory. 
 
 ### Computational Requirements
 
