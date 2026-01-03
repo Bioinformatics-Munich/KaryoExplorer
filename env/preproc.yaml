@@ -10,6 +10,7 @@ dependencies:
   - tabix=1.11
   - bedtools=2.30.0
   - plink=1.90b6.21
+  - gawk
   - bokeh=3.6
   - pandas=2.2
   - numpy=1.26
