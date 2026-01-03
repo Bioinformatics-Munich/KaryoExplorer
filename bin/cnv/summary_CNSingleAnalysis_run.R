@@ -195,9 +195,7 @@ cnv_table$Filt[sort(id_tot)] <- TRUE
 cnv_table$Filt[which(cnv_table[,4] == -1)] <- TRUE
 
 id_centr <- which(cnv_table[,4] == -1)
-# Add a label column for centromeres instead of converting CN to character
-cnv_table$CN_Label <- as.character(cnv_table$CN)
-cnv_table$CN_Label[id_centr] <- 'centr'
+cnv_table[id_centr,4] <- 'centr'
 
 write.table(x = cnv_table, file = file.path(outFile, sprintf('summary_QC.%s.tab', line)), col.names = TRUE, quote = FALSE, row.names = FALSE, sep ='\t')
 
@@ -227,8 +225,8 @@ df$CNVs <- c(rep('NA', 25), rep('NA', 25))
 
 # Create empty df with proper column structure
 CNVdf=cnv_detection[0,]
-# Add Type column (capitalized to match Python expectations)
-CNVdf$Type=character(0)
+# Add type column
+CNVdf$type=character(0)
 # Add sample_name column  
 CNVdf$sample_name=character(0)
 
@@ -239,7 +237,7 @@ if(nrow(cnv_detection)>0){
 
     if(sex_sample == 'M'){
       
-      cnv_del_Hap <- cnv_detection[which(cnv_detection[,4] == 0 & cnv_detection$Chr >= chr_lim), ]
+      cnv_del_Hap <- cnv_detection[which(cnv_detection[,4] == 0 & cnv_detection$Chr >= chr_lim)]
       cnv_dup_Hap <- cnv_detection[which(cnv_detection[,4] > 1 & cnv_detection$Chr >= chr_lim),]
      
       cnv_del <- rbind(cnv_del, cnv_del_Hap)
@@ -248,12 +246,12 @@ if(nrow(cnv_detection)>0){
 
     cnv_del_cp = cnv_del
     if(nrow(cnv_del_cp)>0){
-    cnv_del_cp$Type="Deletion"
+    cnv_del_cp$type="Deletion"
     }
     
     cnv_dup_cp = cnv_dup
     if(nrow(cnv_dup_cp)>0){
-    cnv_dup_cp$Type="Duplication"
+    cnv_dup_cp$type="Duplication"
     } 
     
     CNVdf=rbind(CNVdf,cnv_del_cp)
@@ -321,12 +319,12 @@ CNVdf <- data.frame(
   nSites = numeric(0),
   nHets = numeric(0),
   Len = numeric(0),
-  Type = character(0),
+  type = character(0),
   sample_name = character(0),
   stringsAsFactors = FALSE
 )
 }
-write.table(x = CNVdf, file = file.path(outFile, sprintf('CNV_detection_filt_%s.tsv', sample_name)), col.names = TRUE, quote = FALSE, row.names = FALSE, sep ='\t')
+write.table(x = CNVdf, file = file.path(outFile, sprintf('CNV_detection_filt_%s.tsv', sample_name)), col.names = TRUE, quote = TRUE, row.names = FALSE, sep ='\t')
 
 
 # make the plot for each ipsc

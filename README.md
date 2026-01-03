@@ -92,32 +92,17 @@ Digital karyotyping of iPSC lines is widely practiced, but current workflows suf
 
 ## Installation
 
-### Prerequisites
+**System Requirements:**
 
 - **Nextflow** ≥ 24.10.0 ([install guide](https://www.nextflow.io/docs/latest/getstarted.html))
-- **Java** ≥ 11
-- **Conda**, **Docker**, or **Singularity** for containerization
+- Java ≥ 11
+- Conda, Docker, or Singularity
+- Minimum: 4 CPU cores, 16 GB RAM, 50 GB storage
+- Recommended: HPC cluster for large datasets
 
 ### Quick Setup
 
-**Option 1: System-wide Installation (Recommended)**
-```bash
-# 1. Install Nextflow
-curl -s https://get.nextflow.io | bash
-sudo mv nextflow /usr/local/bin/
-
-# 2. Clone the repository
-git clone https://github.com/Bioinformatics-Munich/KaryoExplorer.git
-cd KaryoExplorer
-
-# 3. Test installation
-nextflow run main.nf --help
-
-# 4. Run pipeline (Nextflow automatically manages all dependencies)
-nextflow run main.nf -params-file my_project.yaml -profile conda
-```
-
-**Option 2: Conda Environment Setup**
+**Conda Environment Setup**
 ```bash
 # 1. Clone the repository
 git clone https://github.com/Bioinformatics-Munich/KaryoExplorer.git
@@ -134,56 +119,70 @@ nextflow run main.nf --help
 nextflow run main.nf -params-file my_project.yaml -profile conda
 ```
 
-### How Dependencies Are Managed
-
-When you run the pipeline with `-profile conda`, Nextflow automatically:
-1. Creates separate conda environments for each pipeline component
-2. Installs all required bioinformatics tools, Python libraries, and R packages
-3. Manages environment activation/deactivation during execution
-
-**You only need to install:**
-- Nextflow ≥ 24.10.0
-- Java ≥ 11
-- Conda (for environment management)
-
-**Nextflow automatically installs:**
-- Bioinformatics tools (bcftools, vcftools, PLINK, bedtools)
-- Python libraries (pandas, numpy, bokeh, biopython)
-- R packages (ggplot2, data.table, ComplexHeatmap)
-- Documentation tools (pandoc)
-
-**System Requirements:**
-- Nextflow ≥ 24.10.0
-- Java ≥ 11
-- Conda, Docker, or Singularity
-- Minimum: 4 CPU cores, 16 GB RAM, 50 GB storage
-- Recommended: HPC cluster for large datasets
-
 For detailed installation instructions, environment setup, and cluster configuration, see **[How_to_run.md](docs/How_to_run.md)**
 
 ---
 
 ## Quick Start
 
-### Prerequisites
-
-- **Nextflow** ≥ 24.10.0 ([install guide](https://www.nextflow.io/docs/latest/getstarted.html))
-- **Java** ≥ 11
-- **Conda**, **Docker**, or **Singularity** for containerization
-
 A detailed guide for testing the pipeline with the demo dataset is provided: **[Illumina Demo Dataset Guide (PDF)](docs/illumina_demo_dataset_guide.pdf)**. You can test go through the guide and prepare and preprocess your own Illumina Infinnium Array output data in similar way. 
 
-**Guide Contents:**
-1. **Data Acquisition**: Understanding the Illumina Global Screening Array v4.0 demo data
-2. **GenomeStudio Processing**: Project setup, sample sheets, data export
-3. **Pipeline Execution**: Pre-configured parameters and step-by-step instructions
-4. **Results Interpretation**: Example outputs and validation
+### Complete File Checklist
 
-#### Sample Pairing File
+To be able to run the pipeline, you need to have following data. Before configuring the pipeline, verify you have all required files:
+
+| Category | File Type | File Name/Description | Status |
+|----------|-----------|----------------------|--------|
+| **Genome Studio** | | | |
+| | Full Data Table | `Full_Data_Table.txt` | ☐ |
+| | Samples Table | `Samples_Table.txt` | ☐ |
+| | SNP Table | `SNP_Table.txt` | ☐ |
+| **PLINK Files** | | | |
+| | PLINK Folder | `PLINK_[timestamp]/` directory | ☐ |
+| | PED File | `*.ped` (inside PLINK folder) | ☐ |
+| | MAP File | `*.map` (inside PLINK folder) | ☐ |
+| | BED File | `*.bed` (inside PLINK folder) | ☐ |
+| **Array Manifest** | | | |
+| | Manifest CSV | `e.g GSA-48v4-0_20085471_D2.csv` | ☐ |
+| **Reference Files** | | | |
+| | Reference Genome (See Below) | `Homo_sapiens.GRCh38.dna.primary_assembly.fa` | ☐ |
+| | PAR Coordinates | `PAR_Coord_GRCh38.txt` (or GRCh37) | ☐ |
+| **Sample Sheet** | | | |
+| | Sample Sheet (See Below) | `sample_sheet.txt` or `sample_sheet.xls` | ☐ |
+
+### Downloading Reference Genomes
+
+If you don't have the reference genome files, you can download them from Ensembl:
+
+**GRCh38 (recommended):**
+```bash
+# Download GRCh38
+wget https://ftp.ensembl.org/pub/release-110/fasta/homo_sapiens/dna/Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz
+
+# Extract
+gunzip Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz
+```
+
+**GRCh37 (legacy):**
+```bash
+# Download GRCh37
+wget https://ftp.ensembl.org/pub/grch37/release-110/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.dna.primary_assembly.fa.gz
+
+# Extract
+gunzip Homo_sapiens.GRCh37.dna.primary_assembly.fa.gz
+```
+
+### Sample Sheet Preperation
+
+**Analysis Types:**
+- **Paired Analysis**: Detects differential copy number changes between sample and reference (e.g., somatic variants in clones vs donor)
+- **Single Analysis**: Identifies absolute copy number variants in individual samples based on expected base copy number. For further details, please see bcftools cnv detection algorithm. 
+
 
 Create a sample pairing file that defines the analysis strategy for your samples. This file specifies which samples should be analyzed individually (single analysis) and which should be compared against reference samples (paired analysis).
 
 **Sample pairing file format** (`sample_sheet.xls`):
+
 ```tsv
 Sample          Reference
 iPSC_clone1     Donor_material1    # Paired: compare iPSC_clone1 vs Donor_material1
@@ -200,10 +199,6 @@ Donor_material2 Donor_material2    # Single: analyze Donor_material2 independent
 - **Paired analysis**: Sample name differs from Reference name (e.g., `iPSC_clone1` vs `Donor_material1`)
 - **Single analysis**: Sample name matches Reference name (e.g., `iPSC_clone1` vs `iPSC_clone1`)
 - **Complete coverage**: All samples used in paired analysis must also be included as single analysis entries
-
-**Analysis Types:**
-- **Paired Analysis**: Detects differential copy number changes between sample and reference (e.g., somatic variants in clones vs donor)
-- **Single Analysis**: Identifies absolute copy number variants in individual samples based on expected base copy number. For further details, please see bcftools cnv detection algorithm. 
 
 ### 2. Configuration
 

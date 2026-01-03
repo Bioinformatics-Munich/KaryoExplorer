@@ -34,7 +34,7 @@ colnames(comp_GT) <- rownames(comp_GT)
 
 # filter the GT considering only the samples in the annotation file:
 # sample_name_ann <- sapply(1:nrow(ann_samples), function(x) paste(ann_samples$SentrixBarcode_A[x], ann_samples$SentrixPosition_A[x], sep = "_"))
-sample_name_ann <- ann_samples$Sample_name
+sample_name_ann <- ann_samples$ID
 id <- which(rownames(comp_GT) %in% sample_name_ann)
 comp_GT <- comp_GT[id,id]
 
@@ -70,14 +70,25 @@ names(col_match) <- samples_name
 
 
 ord_samples <- sapply(names(comp_GT) ,function(i) which(i  == sample_name_ann))
-df_samples <- data.frame(sample_id = names(comp_GT), Sample_name = names(comp_GT))
+# Map technical IDs to biological sample names for color annotation
+biological_names <- sapply(ord_samples, function(idx) ann_samples$Sample_name[idx])
+df_samples <- data.frame(sample_id = names(comp_GT), Sample_name = biological_names)
 
 ha = HeatmapAnnotation(df = df_samples, col = list(Sample_name = col_match),  
                        annotation_legend_param = list(Sample_name = list(ncol = ceiling(P/45), title = "Samples", title_gp = gpar(fontsize = 15, fontface = "bold"), title_position = "topcenter",                                                       
                                                                                                                                 grid_height = unit(8, "mm"), gap = unit(4, "mm"), labels_gp = gpar(fontsize = 11))))
-hm <- Heatmap(as.matrix(comp_GT), name = "GT match",  cluster_rows = hclust_sample, cluster_columns = hclust_sample, row_dend_reorder = FALSE, column_dend_reorder = FALSE, top_annotation = ha,
-              show_row_names = FALSE, show_column_names = TRUE, show_row_dend = FALSE, show_column_dend = TRUE,
-              column_title_gp = gpar(fontsize = 25, fontface = "bold"), col = colorRamp2(seq(min(comp_GT), 1, length = nbins), coul), heatmap_legend_param = list(color_bar = "continuous", legend_height = unit(10, "cm"), labels_gp = gpar(fontsize = 17), title_gp = gpar(fontsize = 15, fontface = "bold")))
+
+# Create heatmap with or without clustering depending on sample count
+if(!is.null(hclust_sample)){
+  hm <- Heatmap(as.matrix(comp_GT), name = "GT match",  cluster_rows = hclust_sample, cluster_columns = hclust_sample, row_dend_reorder = FALSE, column_dend_reorder = FALSE, top_annotation = ha,
+                show_row_names = FALSE, show_column_names = TRUE, show_row_dend = FALSE, show_column_dend = TRUE,
+                column_title_gp = gpar(fontsize = 25, fontface = "bold"), col = colorRamp2(seq(min(comp_GT), 1, length = nbins), coul), heatmap_legend_param = list(color_bar = "continuous", legend_height = unit(10, "cm"), labels_gp = gpar(fontsize = 17), title_gp = gpar(fontsize = 15, fontface = "bold")))
+}else{
+  # Single sample - no clustering
+  hm <- Heatmap(as.matrix(comp_GT), name = "GT match",  cluster_rows = FALSE, cluster_columns = FALSE, top_annotation = ha,
+                show_row_names = FALSE, show_column_names = TRUE,
+                column_title_gp = gpar(fontsize = 25, fontface = "bold"), col = colorRamp2(seq(min(comp_GT), 1, length = nbins), coul), heatmap_legend_param = list(color_bar = "continuous", legend_height = unit(10, "cm"), labels_gp = gpar(fontsize = 17), title_gp = gpar(fontsize = 15, fontface = "bold")))
+}
 
 
 padding = unit.c(unit(9, "mm"), unit(0.5, "cm"), unit(c(3, 3), "mm"))

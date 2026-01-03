@@ -532,10 +532,35 @@ def _build_chromosome_grid(
         prev = float(chr_baf["Position"].min())
         seg_r = []
         base_r = []
+        first_baseline = True  # Track if this is the first baseline segment
+        first_deletion = True  # Track if this is the first deletion
+        first_duplication = True  # Track if this is the first duplication
 
         for _, row in chr_cnv.sort_values("Start").iterrows():
             start, end = float(row["Start"]), float(row["End"])
             cnv_val = float(row[cn_col])
+
+            # Handle CN=2 regions (baseline/normal) - draw as baseline, not as events
+            if abs(cnv_val - 2.0) < 0.01:  # Allow small floating point tolerance
+                # Draw this CN=2 segment as part of the baseline
+                baseline_kwargs = {
+                    "color": CLR_BASE,
+                    "line_width": 2,
+                    "alpha": 0.8,
+                    "muted_alpha": 0.1,
+                }
+                if first_baseline:
+                    baseline_kwargs["legend_label"] = "CN=2 baseline"
+                    first_baseline = False
+                
+                r0 = p_cnv.line(
+                    [start, end],
+                    [2, 2],
+                    **baseline_kwargs
+                )
+                base_r.append(r0)
+                prev = end
+                continue
 
             if "Type" in row and pd.notna(row["Type"]):
                 lbl = str(row["Type"]).title()
@@ -544,15 +569,23 @@ def _build_chromosome_grid(
 
             clr = CLR_DUP if "Dup" in lbl else CLR_DEL
 
-            # baseline to start of event
+            # baseline to start of event (only draw if there's a gap)
+            if prev < start:
+                # Only add legend label to the first baseline segment
+                baseline_kwargs = {
+                    "color": CLR_BASE,
+                    "line_width": 2,
+                    "alpha": 0.8,
+                    "muted_alpha": 0.1,
+                }
+                if first_baseline:
+                    baseline_kwargs["legend_label"] = "CN=2 baseline"
+                    first_baseline = False
+                
             r0 = p_cnv.line(
                 [prev, start],
                 [2, 2],
-                color=CLR_BASE,
-                line_width=2,
-                alpha=0.8,
-                legend_label="CN=2 baseline",
-                muted_alpha=0.1,
+                    **baseline_kwargs
             )
             base_r.append(r0)
 
@@ -564,15 +597,26 @@ def _build_chromosome_grid(
                 line_width=2,
                 alpha=0.8,
             )
+            
             # event segment
+            # Only add legend label to the first occurrence of each type
+            event_kwargs = {
+                "color": clr,
+                "line_width": 4,
+                "alpha": 0.9,
+                "muted_alpha": 0.1,
+            }
+            if "Dup" in lbl and first_duplication:
+                event_kwargs["legend_label"] = lbl
+                first_duplication = False
+            elif "Del" in lbl and first_deletion:
+                event_kwargs["legend_label"] = lbl
+                first_deletion = False
+            
             r1 = p_cnv.line(
                 [start, end],
                 [cnv_val, cnv_val],
-                color=clr,
-                line_width=4,
-                alpha=0.9,
-                legend_label=lbl,
-                muted_alpha=0.1,
+                **event_kwargs
             )
             seg_r.append(r1)
 
@@ -587,14 +631,20 @@ def _build_chromosome_grid(
             prev = end
 
         # tail baseline
+        # Add legend label only if no CNV events were found (first_baseline is still True)
+        tail_baseline_kwargs = {
+            "color": CLR_BASE,
+            "line_width": 2,
+            "alpha": 0.8,
+            "muted_alpha": 0.1,
+        }
+        if first_baseline:
+            tail_baseline_kwargs["legend_label"] = "CN=2 baseline"
+        
         r_last = p_cnv.line(
             [prev, float(chr_baf["Position"].max())],
             [2, 2],
-            color=CLR_BASE,
-            line_width=2,
-            alpha=0.8,
-            legend_label="CN=2 baseline",
-            muted_alpha=0.1,
+            **tail_baseline_kwargs
         )
         base_r.append(r_last)
 

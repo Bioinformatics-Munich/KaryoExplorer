@@ -8,7 +8,7 @@ suppressPackageStartupMessages(library(argparse))
 parser <- ArgumentParser(description = "Write PAR file for each SNP in the manifest file" )
 
 parser$add_argument("--manifest_file", type = "character", help = ".csv file, manifest file used in GenomeStudio")
-parser$add_argument("--n_header_line", type = "integer", default = 7, help = "n. of header lines to skip (standard Illumina manifests: 7, demo formats: 5)")
+parser$add_argument("--n_header_line", type = "integer", default = 7, help = "n. of header lines to skip")
 parser$add_argument("--PAR_file", type = "character", help = ".txt file, PAR built from https://www.ncbi.nlm.nih.gov/assembly/GCF_000001405.13/")
 parser$add_argument("--outf", type = "character", default = '.', help = "outer fold")
 
@@ -72,21 +72,15 @@ posY_PAR <- unlist(posY_PAR)
 # find the original id
 if(length(posX_PAR)>0){
   
-  id_PARX <- sapply(posX_PAR, function(x) which(df$pos == x & df$chr == 'X'))
-  id_PARX <- unlist(id_PARX)
-  if(length(id_PARX) > 0){
-    PAR_vect[id_PARX] <- 1
-  }
+  id_PARX <- sapply(posX_PAR, function(x) which(df$pos == x & df$chr == 'X'))  
+  PAR_vect[id_PARX] <- 1
   
 }
 
 if(length(posY_PAR)>0){
   
-  id_PARY <- sapply(posY_PAR, function(y) which(df$pos == y & df$chr == 'Y'))
-  id_PARY <- unlist(id_PARY)
-  if(length(id_PARY) > 0){
-    PAR_vect[id_PARY] <- 1
-  }
+  id_PARY <- sapply(posY_PAR, function(y) which(df$pos == y & df$chr == 'Y'))  
+  PAR_vect[id_PARY] <- 1
 
 }
 

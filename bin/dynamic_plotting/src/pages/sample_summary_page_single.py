@@ -182,6 +182,12 @@ class SampleSummaryGeneratorSingle:
                         <h3 class="section-title">CNV Distribution</h3>
                         <div class="plot-container">
                             <div id="cnv-distribution-plot" class="responsive-plot"></div>
+                            <div id="cnv-distribution-warning" style="display:none; width:100%; text-align:center; margin:20px 0;">
+                                <div style="display:inline-block; text-align:center; padding:15px; margin:20px auto; max-width:600px; background-color:#fff3cd; border:1px solid #ffc107; border-radius:6px;">
+                                    <i class="fas fa-info-circle" style="color:#856404; font-size:20px;"></i>
+                                    <span style="margin-left:10px; color:#856404; font-size:14px; font-weight:500;">No CNV calls found</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
@@ -190,6 +196,12 @@ class SampleSummaryGeneratorSingle:
                         <h3 class="section-title">Karyotype Overview</h3>
                         <div class="plot-container">
                             <div id="karyotype-plot" class="responsive-plot_karyotype"></div>
+                            <div id="karyotype-warning" style="display:none; width:100%; text-align:center; margin:20px 0;">
+                                <div style="display:inline-block; text-align:center; padding:15px; margin:20px auto; max-width:600px; background-color:#fff3cd; border:1px solid #ffc107; border-radius:6px;">
+                                    <i class="fas fa-info-circle" style="color:#856404; font-size:20px;"></i>
+                                    <span style="margin-left:10px; color:#856404; font-size:14px; font-weight:500;">No CNV calls found</span>
+                                </div>
+                            </div>
                         </div>           
                         
                         <h4 class="subsection-title">Chromosome details</h4>
@@ -348,6 +360,10 @@ class SampleSummaryGeneratorSingle:
                             try {{
                                 if (!cnvPlotJson.error) {{
                                     Bokeh.embed.embed_item(cnvPlotJson, "cnv-distribution-plot");
+                                    // Show warning if data is empty
+                                    if (cnvPlotJson.is_empty_data) {{
+                                        document.getElementById('cnv-distribution-warning').style.display = 'block';
+                                    }}
                                 }} else {{
                                     throw new Error(cnvPlotJson.error);
                                 }}
@@ -362,6 +378,10 @@ class SampleSummaryGeneratorSingle:
                                     console.warn(`Version mismatch: JS ${{Bokeh.version}} vs Python ${{karyotypePlotJson.version}}`);
                                 }}
                                 Bokeh.embed.embed_item(karyotypePlotJson, "karyotype-plot");
+                                // Show warning if data is empty
+                                if (karyotypePlotJson.is_empty_data) {{
+                                    document.getElementById('karyotype-warning').style.display = 'block';
+                                }}
                             }} else {{
                                 const errorMsg = karyotypePlotJson?.error || 'Failed to load karyotype visualization';
                                 document.getElementById('karyotype-plot').innerHTML = 

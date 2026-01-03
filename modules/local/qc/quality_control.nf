@@ -44,6 +44,7 @@ process QC_MAIN_ANALYSIS {
         val male_frac
         val R_hpY
         val female_frac
+        val hetexcess_quality_threshold
 
     output:
         path "QC_results_flat/*", emit: qc_files
@@ -55,6 +56,8 @@ process QC_MAIN_ANALYSIS {
         path "BAF_table.txt", emit: baf_table
         path "GT_table.txt", emit: gt_table
         path "GT_comp.txt", emit: gt_comp
+        path "info_QC.txt", emit: info_qc
+        path "HetExcess_Report.txt", emit: hetexcess_report
 
     when:
         manifest && par_file && fullTable && samplesTable && snpTable
@@ -107,9 +110,18 @@ process QC_MAIN_ANALYSIS {
         
         ${projectDir}/bin/plotting/plot_sample_QC_run.R --sample_table_file temp_plot_samples.txt --SNP_table_info_file info_QC.txt --outf 'QC_results'
         
+        # Step 4: Generate HetExcess report
+        echo "[\$(date '+%Y-%m-%d %H:%M:%S')] INFO: Generating HetExcess quality report"
+        ${projectDir}/bin/qc/hetexcess_report.R \\
+            --snp_table $snpTable \\
+            --het_low_threshold ${het_low_as} \\
+            --het_up_threshold ${het_up_as} \\
+            --clonal_threshold ${hetexcess_quality_threshold} \\
+            --output_file HetExcess_Report.txt
+        
         # Copy results to QC directory
         echo "[\$(date '+%Y-%m-%d %H:%M:%S')] INFO: Organizing QC results"
-        cp Full_Data_Table_filt.txt Samples_Table_filt.txt LRR_table.txt BAF_table.txt GT_table.txt GT_comp.txt GT_comp.tsv LRR_stdev_table.tsv Samples_Table_filt_QC.tsv QC_results/
+        cp Full_Data_Table_filt.txt Samples_Table_filt.txt LRR_table.txt BAF_table.txt GT_table.txt GT_comp.txt GT_comp.tsv LRR_stdev_table.tsv Samples_Table_filt_QC.tsv info_QC.txt HetExcess_Report.txt QC_results/
         cp QC_results/Samples_Table_filt.txt QC_results/Samples_Table_filt.tsv
         
         # Standardize column names to Sample.ID convention

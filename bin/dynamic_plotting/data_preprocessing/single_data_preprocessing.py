@@ -116,11 +116,6 @@ class DataLoader:
     
     def load_bed(self, path):
         """Load BED file with chromosome mapping"""
-        import os
-        # Handle empty BED files gracefully
-        if os.path.getsize(path) == 0:
-            return pd.DataFrame(columns=['Chromosome', 'Start', 'End', 'Length'])
-        
         df = pd.read_csv(path, sep='\t', header=None)
         df.columns = ['Chromosome', 'Start', 'End', 'Length'][:len(df.columns)]
         df['Chromosome'] = df['Chromosome'].apply(self._map_chromosome)

@@ -15,7 +15,7 @@ process MANIFEST_GET_REF_ALLELE {
 
     publishDir "${params.outdir}/2.0_preprocess/2.1_manifest_reference", mode: 'copy', overwrite: true
 
-    conda "${baseDir}/env/preproc.yaml"
+    conda 'bedtools'
 
     input:
         path manifest
@@ -32,35 +32,10 @@ process MANIFEST_GET_REF_ALLELE {
         """
         echo "[\$(date '+%Y-%m-%d %H:%M:%S')] INFO: Starting manifest reference allele extraction for ${manifest_name}"
         
-        # Extract SNP positions from manifest using column names (robust approach)
-        echo "[\$(date '+%Y-%m-%d %H:%M:%S')] INFO: Extracting SNP positions from manifest (auto-detecting Chr and MapInfo columns)"
+        # Extract SNP positions from manifest
+        echo "[\$(date '+%Y-%m-%d %H:%M:%S')] INFO: Extracting SNP positions from manifest"
         sed -e '1,/\\[Assay\\]/d' -e '/\\[Controls\\]/,\$d' $manifest | \\
-        gawk 'BEGIN{FS=",";OFS="\\t"} 
-        NR==1 {
-            # Find column indices by name
-            for(i=1; i<=NF; i++) {
-                if(\$i == "Chr") chr_col = i;
-                if(\$i == "MapInfo") pos_col = i;
-            }
-            if(chr_col == 0 || pos_col == 0) {
-                print "ERROR: Could not find Chr or MapInfo columns in manifest header" > "/dev/stderr";
-                exit 1;
-            }
-            print "INFO: Found Chr at column " chr_col ", MapInfo at column " pos_col > "/dev/stderr";
-            next;
-        }
-        NR > 1 {
-            # Split line into array for dynamic field access
-            split(\$0, fields, ",");
-            chr = fields[chr_col];
-            pos = fields[pos_col];
-            
-            # Validate and output
-            if(chr != "XY" && chr != "MT" && chr != "0" && chr != "" && 
-               chr+0 > 0 && chr+0 <= 24 && pos+0 > 0) {
-                print chr, pos-1, pos;
-            }
-        }' > manifest.bed
+        gawk 'BEGIN{FS=",";OFS="\\t"} \$10!="XY" && \$10!="MT" && \$10!="0" && !/MapInfo/ {print \$10,\$11-1,\$11}' > manifest.bed
         
         # Get FASTA sequences
         echo "[\$(date '+%Y-%m-%d %H:%M:%S')] INFO: Extracting FASTA sequences for SNP positions"

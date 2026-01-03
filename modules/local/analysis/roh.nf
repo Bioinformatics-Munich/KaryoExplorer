@@ -51,7 +51,6 @@ process ROH_ANALYSIS_SINGLE {
         """
         # Create directory structure
         mkdir -p overlap/${pre_sample}/{analysis,data}
-        mkdir -p example_output15
         
         # Create compressed and indexed VCF
         bgzip -c "${vcf_baf_lrr}" > input.vcf.gz
@@ -160,7 +159,6 @@ process ROH_ANALYSIS_PAIRED {
     script:
         """
         # Create directory structure
-        mkdir -p example_output15
         
         mkdir -p "${pre_sample}_${post_sample}/cnv" "${pre_sample}_${post_sample}/roh"
         mkdir -p overlap/${pre_sample}_${post_sample}/{analysis,data}

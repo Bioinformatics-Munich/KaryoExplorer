@@ -43,6 +43,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--output_dir", required=True, help="Folder for output plots / reports")
     p.add_argument("--app_name", default="index", help="Name for the main HTML application file (default: index)")
     p.add_argument("--email_helmholtz", default="", help="Helmholtz institution email")
+    p.add_argument("--support_helmholtz", default="", help="Helmholtz support email")
     p.add_argument("--email_analyst", default="", help="Analyst email (optional)")
     p.add_argument("--name_analyst", default="", help="Analyst name (optional)")
     return p.parse_args()
@@ -247,7 +248,8 @@ def main() -> None:
         
     single_simulated_objs, paired_simulated_objs = load_simulated_samples(args.simulated_data_dir)
     logging.info("Loaded simulated data")
-    info_generator = InfoPageGenerator(output_manager, single_simulated_objs, paired_simulated_objs)
+    info_generator = InfoPageGenerator(output_manager, single_simulated_objs, paired_simulated_objs, 
+                                       support_email=args.support_helmholtz)
     info_generator.save()
     logging.info("Created documentation components with simulated data")
     

@@ -52,6 +52,7 @@ workflow DK {
     male_frac
     R_hpY
     female_frac
+    hetexcess_quality_threshold
 
     main:
     
@@ -81,7 +82,8 @@ workflow DK {
         BBT_dev_as,
         male_frac,
         R_hpY,
-        female_frac
+        female_frac,
+        hetexcess_quality_threshold
     )
 
     QC_PREPARE_ANNOTATION(

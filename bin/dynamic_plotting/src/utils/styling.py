@@ -103,16 +103,6 @@ class StylingManager:
         # Use app_name or default to "Digital Karyotyping"
         app_display_name = self.app_name if self.app_name else "Digital Karyotyping"
         
-        # Build the email/contact information section
-        contact_parts = []
-        
-        # Add main institution email with icon
-        if self.email_helmholtz:
-            contact_parts.append(f'<a href="mailto:{self.email_helmholtz}" class="footer-icon-link" title="Email Helmholtz">') 
-            contact_parts.append('<i class="fas fa-envelope" aria-hidden="true"></i>')
-            contact_parts.append('<span class="sr-only">Email</span>')
-            contact_parts.append('</a>')
-        
         # Build contact info text
         contact_info = ""
         if self.name_analyst:
@@ -123,8 +113,6 @@ class StylingManager:
         elif self.email_analyst:
             contact_info = f"<br><span style='font-size: 0.9em;'>Analysis done by: <a href='mailto:{self.email_analyst}' style='color: #3498db;'>{self.email_analyst}</a></span>"
         
-        contact_html = ''.join(contact_parts)
-        
         footer_content = f"""<footer class="site-footer">
     <div class="footer-container">
         <h4 class="footer-title">
@@ -132,7 +120,6 @@ class StylingManager:
             <span class="footer-subtitle">
                 Helmholtz&nbsp;Zentrum&nbsp;München&nbsp;Core&nbsp;Facility&nbsp;Bioinformatics&nbsp;and&nbsp;Statistics
             </span>
-            {contact_html}
         </h4>
         <p class="footer-text">
             &copy;&nbsp;2025&nbsp;Helmholtz&nbsp;Zentrum&nbsp;München.{contact_info}

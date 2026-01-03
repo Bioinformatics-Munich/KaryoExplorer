@@ -2,17 +2,14 @@
 
 /*
 ========================================================================================
-KARYOPLAYGROUND v2.0 - DIGITAL KARYOTYPING PIPELINE
+KARYOPEXPLORER v1.0 - DIGITAL KARYOTYPING PIPELINE
 ========================================================================================
 A Nextflow pipeline for digital karyotyping analysis including:
 - Quality control and filtering
-- CNV detection and analysis  
-- Genotype matching
-- ROH analysis
+- Differential CNV detection and analysis  
+- Differential RoH analysis
 - Interactive visualization
 
-Author: Ugur Dura
-Version: 2.0
 ----------------------------------------------------------------------------------------
 */
 
@@ -58,6 +55,19 @@ workflow {
     // Validate parameters against schema (uncomment when ready)
     // validateParameters()
     
+    // Get git revision automatically
+    def gitRevision = workflow.revision ?: 'N/A'
+    if (gitRevision == 'N/A') {
+        try {
+            gitRevision = "git describe --tags --always --dirty".execute().text.trim()
+            if (!gitRevision) {
+                gitRevision = "git rev-parse --short HEAD".execute().text.trim()
+            }
+        } catch (Exception e) {
+            gitRevision = 'unknown'
+        }
+    }
+    
     // Print pipeline start information
     log.info """
     ================================================================================
@@ -67,7 +77,7 @@ workflow {
     Profile:     ${workflow.profile}
     Output dir:  ${params.outdir}
     Work dir:    ${workflow.workDir}
-    Revision:    ${workflow.revision ?: 'N/A'}
+    Revision:    ${gitRevision}
     ================================================================================
     """
     
@@ -86,6 +96,7 @@ workflow {
         manifest, par, params.nhead, fullTable, samplesTable, snpTable, gsplink, fasta, samples_refs,
         params.het_up_as, params.clust_sep_as, params.ABR_mean_as, params.AAR_mean_as, params.BBR_mean_as, 
         params.ABT_mean_low_as, params.ABT_mean_up_as, params.het_low_as, params.MAF_as, params.AAT_mean_as, 
-        params.AAT_dev_as, params.BBT_mean_as, params.BBT_dev_as, params.male_frac, params.R_hpY, params.female_frac
+        params.AAT_dev_as, params.BBT_mean_as, params.BBT_dev_as, params.male_frac, params.R_hpY, params.female_frac,
+        params.hetexcess_quality_threshold
     )
 }

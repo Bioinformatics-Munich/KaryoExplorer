@@ -12,7 +12,7 @@ process DYNAMIC_PLOT_SINGLE {
     tag 'all_single'
     label 'process_low'
 
-    publishDir "${params.outdir}/5.1_${params.app_name}_unpaired", 
+    publishDir "${params.outdir}/5.1_${params.app_name}_single", 
         mode: 'copy',
         overwrite: true,
         saveAs: { filename ->
@@ -23,7 +23,7 @@ process DYNAMIC_PLOT_SINGLE {
             }
         }
     
-    publishDir "${params.outdir}/0.0_information/0.1_pipeline_logs/5.1_${params.app_name}_unpaired_logs", 
+    publishDir "${params.outdir}/0.0_information/0.1_pipeline_logs/5.1_${params.app_name}_single_logs", 
         mode: 'copy',
         overwrite: true,
         pattern: "{all_single_input_files.txt,dynamic_plotting_single.log,processing_summary.txt}"
@@ -56,8 +56,6 @@ process DYNAMIC_PLOT_SINGLE {
         mkdir -p samples
         mkdir -p dynamic_plots_single
 
-        mkdir example3
-
         # Create simulated data directory
         mkdir -p simulated_data
 
@@ -82,6 +80,7 @@ process DYNAMIC_PLOT_SINGLE {
             --parameters ${parameters} \\
             --app_name "${params.app_name}" \\
             --email_helmholtz "${params.email_helmholtz}" \\
+            --support_helmholtz "${params.support_helmholtz}" \\
             --email_analyst "${params.email_analyst}" \\
             --name_analyst "${params.name_analyst}"
         
@@ -140,8 +139,6 @@ process DYNAMIC_PLOT_PAIRED {
         mkdir -p samples
         mkdir -p dynamic_plots_paired
 
-        mkdir example3
-
         # Create simulated data directory
         mkdir -p simulated_data
 
@@ -170,6 +167,7 @@ process DYNAMIC_PLOT_PAIRED {
             --parameters ${parameters} \\
             --app_name "${params.app_name}" \\
             --email_helmholtz "${params.email_helmholtz}" \\
+            --support_helmholtz "${params.support_helmholtz}" \\
             --email_analyst "${params.email_analyst}" \\
             --name_analyst "${params.name_analyst}"
         

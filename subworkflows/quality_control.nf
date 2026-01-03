@@ -37,6 +37,7 @@ workflow QUALITY_CONTROL {
         male_frac
         R_hpY
         female_frac
+        hetexcess_quality_threshold
     
     main:
         // Log workflow start
@@ -73,7 +74,8 @@ workflow QUALITY_CONTROL {
             BBT_dev_as,
             male_frac,
             R_hpY,
-            female_frac
+            female_frac,
+            hetexcess_quality_threshold
         )
 
         // Step 2: Prepare annotation files

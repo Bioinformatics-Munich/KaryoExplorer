@@ -19,10 +19,12 @@ class InfoPageGenerator:
     def __init__(self,
                  output_manager,
                  single_simulated: list = None,
-                 paired_simulated: list = None):
+                 paired_simulated: list = None,
+                 support_email: str = ""):
         self.output_manager      = output_manager
         self.directory_structure = output_manager.dir_structure
         self.components_dir      = Path(self.directory_structure.components_dir)
+        self.support_email       = support_email
 
         self.single_simulated = single_simulated or []
         self.paired_simulated = paired_simulated or []
@@ -350,30 +352,71 @@ class InfoPageGenerator:
                 <h2>Background</h2>
                 
                 <div class="dropdown-section_info_page">
+                    <button class="dropdown-toggle_info_page">About & How to Cite</button>
+                    <div class="dropdown-content_info_page">
+                        <div class="dropdown-grid_info_page">
+                            <!-- Left Column -->
+                            <div class="text-placeholder_info_page">
+                                <h3>Who We Are?</h3>
+                                <p><strong>Core Facility Bioinformatics and Statistics (CF-BIOS)</strong></p>
+                                <p style="font-size: 0.9em; color: #666; margin-bottom: 10px;">Helmholtz Zentrum München GmbH - German Research Center for Environmental Health<br>85764 Neuherberg, Germany</p>
+                                
+                                <p style="font-size: 0.95em; line-height: 1.6; margin-bottom: 10px;">
+                                    The Core Facility Bioinformatics and Statistics (CF-BIOS) provides expert support in bioinformatics and 
+                                    statistics for a wide range of research applications. We design and deliver services and workflows in close 
+                                    collaboration with data-generating core facilities, ensuring seamless integration and high-quality results.
+                                </p>
+                                
+                                <p style="margin-top: 12px;">
+                                    <a href="https://www.helmholtz-munich.de/en/core-facility/bioinformatics-and-statistics" 
+                                       target="_blank" 
+                                       style="color: #007bff; text-decoration: none; font-weight: 500;">
+                                        Visit CF-BIOS Website →
+                                    </a>
+                                </p>
+                                
+                                <h3 style="margin-top: 20px;">Associated Publication</h3>
+                                <p>[Placeholder: TBA]</p>
+                            </div>
+                            
+                            <!-- Right Column -->
+                            <div class="text-placeholder_info_page">
+                                <h3>How to Cite</h3>
+                                <p style="font-style: italic; background-color: #f8f9fa; padding: 10px; border-left: 3px solid #007bff; border-radius: 4px;">
+                                    "We acknowledge the technical support of <strong>Core Facility Bioinformatics and Statistics</strong> at Helmholtz Munich."
+                                </p>
+                                
+                                <h3>Contact & Support</h3>
+                                <p>For questions about the technical details of the pipeline or if you encounter any problems, please contact us at:</p>
+                                <p style="margin-top: 10px;"><strong>Email:</strong> <a href="mailto:{self.support_email}" style="color: #007bff; text-decoration: none;">{self.support_email}</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dropdown-section_info_page">
                     <button class="dropdown-toggle_info_page">Pipeline Overview</button>
                     <div class="dropdown-content_info_page">
                         <div class="dropdown-grid_info_page">
                             <!-- Left Column -->
                             <div class="text-placeholder_info_page">
-                                <h3>Digital Karyotyping Pipeline</h3>
-                                <p>An efficient analysis pipeline for detecting copy number variations (CNVs) through comparison of differentiated cell genomic profiles against donor cell references.</p>
+                                <h3>KaryoExplorer - Digital Karyotyping Pipeline</h3>
+                                <p>KaryoExplorer is a digital karyotyping pipeline that analyzes Illumina genotyping array data to assess the genomic integrity of your samples. By comparing genomic SNP profiles, the pipeline helps evaluate the differentiation quality of stem cells, detecting chromosomal aberrations including copy number variations (CNVs) and loss of heterozygosity (LoH) events. Results are presented in this interactive report.</p>
                                 
                                 <div class="pipeline-details_info_page">
-                                    <h4>Key Features</h4>
+                                    <h4>What This Report Shows</h4>
                                     <ul>
-                                        <li><strong>Core Algorithm Developed by:</strong> Dr. Lucia Trastulla & Dr. Laura Jiménez Barrón (MPIP Ziller Lab)</li>
-                                        <li><strong>Pipeline Developed by:</strong> HMGU Bioinformatics Platform</li>
-                                        <li><strong>Purpose:</strong> Systematic detection of somatic CNVs in differentiated cells</li>
+                                        <li><strong>Deletions and Duplications:</strong> Chromosomal regions with copy number gains or losses</li>
+                                        <li><strong>Loss of Heterozygosity:</strong> Regions where one parental allele is lost, including copy-neutral LoH (cnLoH)</li>
+                                        <li><strong>Quality Metrics:</strong> Sample quality indicators such as call rate and LRR standard deviation</li>
                                     </ul>
 
-                                    <h4>Workflow Management</h4>
-                                    <div class="workflow-info_info_page">
-                                        <p>Built using <strong>Nextflow</strong> framework for:</p>
+                                    <h4>Visualizations Available</h4>
                                         <ul>
-                                            <li>Reproducible analyses</li>
-                                            <li>Scalable computational workflows</li>
+                                        <li><strong>Genome-wide Karyograms:</strong> Overview of all chromosomes with CNV events color-coded by type</li>
+                                        <li><strong>Chromosome Views:</strong> Detailed per-chromosome plots showing BAF, LRR, and copy number tracks</li>
+                                        <li><strong>ROH Regions:</strong> Highlighted runs of homozygosity with cnLoH candidates marked</li>
                                         </ul>
-                                    </div>
                                 </div>
                             </div>
                             
@@ -382,22 +425,25 @@ class InfoPageGenerator:
                                 <div class="analysis-modes_info_page">
                                     <h4>Analysis Modes</h4>
                                     <div class="mode-info_info_page">
-                                        <h5>Single Mode</h5>
-                                        <ul>
-                                            <li>Individual sample analysis</li>
-                                            <li>Uses provided reference profile</li>
-                                            <li>Detects absolute CNV calls</li>
-                                        </ul>
+                                        <h5>Single-Sample Analysis</h5>
+                                        <p style="font-size: 0.95em; margin-bottom: 8px;">Examines one sample to identify CNVs and LoH events. Use this mode to assess the genomic profile of an individual cell line or sample.</p>
                                     </div>
                                     
                                     <div class="mode-info_info_page">
-                                        <h5>Paired Mode</h5>
-                                        <ul>
-                                            <li>Comparative analysis of paired samples</li>
-                                            <li>Identifies differential CNVs</li>
-                                            <li>Detects shared vs discordant events</li>
-                                        </ul>
+                                        <h5>Paired Analysis (PRE/POST)</h5>
+                                        <p style="font-size: 0.95em; margin-bottom: 8px;">Compares two related samples, such as a donor cell line (PRE) and its derived iPSC clone (POST). This mode highlights acquired chromosomal changes that occurred during reprogramming or differentiation.</p>
                                     </div>
+                                </div>
+                                
+                                <div class="pipeline-details_info_page" style="margin-top: 15px;">
+                                    <h4>Using This Report</h4>
+                                    <p style="font-size: 0.95em; margin-bottom: 10px;">For detailed guidance on interpreting visualizations and performing analysis, see the <strong>"Plots and Their Explanations"</strong> and <strong>"How to Analyze Your Data"</strong> sections below.</p>
+                                    <ul>
+                                        <li>Navigate using the menu to explore different samples and chromosomes</li>
+                                        <li>Zoom and pan on plots to examine regions of interest in detail</li>
+                                        <li>Use "Print to PDF" to save the current view for documentation</li>
+                                        <li>Export figures as PNG for publications using the toolbar on each plot</li>
+                                        </ul>
                                 </div>
                             </div>
                         </div>

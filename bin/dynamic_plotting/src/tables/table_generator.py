@@ -277,8 +277,44 @@ class TableGenerator:
     def generate_cnv_summary_table(self, cnv_df):
         """Generate CNV statistics summary table from filtered CNV detection data"""
         try:
+            # Handle empty data - show zeros instead of error message
             if cnv_df is None or cnv_df.empty:
-                return "<div class='info-box_empty'><i class='fas fa-info-circle'></i>No CNV data available</div>"
+                table_html = """
+                <table class="cnv-table">
+                    <thead>
+                        <tr>
+                            <th>Total CNVs</th>
+                            <th>Significant CNVs</th>
+                            <th>Deletions >0.2MB</th>
+                            <th>Significant Deletions >0.2MB</th>
+                            <th>Duplications >0.2MB</th>
+                            <th>Significant Duplications >0.2MB</th>
+                            <th>Deletions >1MB</th>
+                            <th>Significant Deletions >1MB</th>
+                            <th>Duplications >1MB</th>
+                            <th>Significant Duplications >1MB</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div style='text-align:center; padding:10px; color:#6c757d; font-style:italic;'>
+                    <i class='fas fa-info-circle'></i> No CNV calls found
+                </div>
+                """
+                return table_html
             
             # Convert Length from bases to megabases
             cnv_df['Length_MB'] = cnv_df['Length'] / 1e6
@@ -366,8 +402,49 @@ class TableGenerator:
     def generate_cnv_summary_table_differential(self, cnv_df):
         """Generate CNV statistics summary table for paired analysis"""
         try:
+            # Handle empty data - show zeros instead of error message
             if cnv_df is None or cnv_df.empty:
-                return "<div class='info-box_empty'><i class='fas fa-info-circle'></i>No CNV data available</div>"
+                # Return table with all zeros
+                table_html = """
+                <table class="cnv-table">
+                    <thead>
+                        <tr>
+                            <th>Total CNVs</th>
+                            <th>Significant CNVs</th>
+                            <th>Deletions >0.2MB</th>
+                            <th>Significant Deletions >0.2MB</th>
+                            <th>Duplications >0.2MB</th>
+                            <th>Significant Duplications >0.2MB</th>
+                            <th>Deletions >1MB</th>
+                            <th>Significant Deletions >1MB</th>
+                            <th>Duplications >1MB</th>
+                            <th>Significant Duplications >1MB</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div style='text-align:center; padding:15px; margin:20px auto; max-width:600px; 
+                     background-color:#fff3cd; border:1px solid #ffc107; border-radius:6px;'>
+                    <i class='fas fa-info-circle' style='color:#856404; font-size:20px;'></i>
+                    <span style='margin-left:10px; color:#856404; font-size:14px; font-weight:500;'>
+                    No CNV calls found
+                    </span>
+                </div>
+                """
+                return table_html
             
             # Calculate P-value from Quality score if not present
             if 'P_value' not in cnv_df.columns:

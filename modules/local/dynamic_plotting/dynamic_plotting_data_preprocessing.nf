@@ -72,8 +72,6 @@ process DYNAMIC_PLOT_DATA_PREP_SINGLE {
         work_input_dir="input_files"
         mkdir -p "\$work_processed_dir" "\$work_input_dir"
 
-        mkdir -p example2
-
         # Copy files to work input directory
         cp ${summary_tab} ${dat_tab} ${cn_tab} ${cnv_detection_filt} ${cnv_table} ${union_bed} ${roh_bed} ${cn_bed} "\$work_input_dir/"
 
@@ -168,8 +166,6 @@ process DYNAMIC_PLOT_DATA_PREP_PAIRED {
         work_processed_dir="processed"
         work_input_dir="input_files"
         mkdir -p "\$work_processed_dir" "\$work_input_dir"
-
-        mkdir -p example2
 
         # Copy files to work input directory
         cp ${summary_pre} ${dat_pre} ${cn_pre} ${summary_post} ${dat_post} ${cn_post} \\

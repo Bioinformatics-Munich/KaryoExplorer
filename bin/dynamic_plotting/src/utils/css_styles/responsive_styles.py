@@ -241,10 +241,10 @@ def get_responsive_styles():
 
 .responsive-plot_karyotype{
     width:100%;
-    height:1vh;         
+    height:auto;         
     min-height:600px;    
     max-height:900px;     
-    margin:0px 0;
+    margin:20px 0;
 }
 
 .responsive-plot_chromosome{
@@ -257,5 +257,37 @@ def get_responsive_styles():
 .bk-root .bk-plot {
     width: 100% !important;
     height: 100% !important;
+}
+
+/* Dedicated styles for "No CNV calls found" warning messages in plots */
+.cnv-warning-container {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.cnv-warning-box {
+    text-align: center !important;
+    padding: 15px !important;
+    margin: 20px auto !important;
+    max-width: 600px !important;
+    background-color: #fff3cd !important;
+    border: 1px solid #ffc107 !important;
+    border-radius: 6px !important;
+}
+
+.cnv-warning-box i {
+    color: #856404 !important;
+    font-size: 20px !important;
+}
+
+.cnv-warning-box span {
+    margin-left: 10px !important;
+    color: #856404 !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
 }
 """

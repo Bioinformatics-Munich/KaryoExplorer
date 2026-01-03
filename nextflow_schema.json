@@ -1,8 +1,8 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema",
-    "$id": "https://raw.githubusercontent.com/your-org/pipeline_digital_karyotyping/main/nextflow.schema.json",
-    "title": "KaryoPlayground v2.0 - Digital Karyotyping Pipeline parameters",
-    "description": "A comprehensive Nextflow pipeline for digital karyotyping analysis including CNV detection, ROH analysis, and interactive visualization",
+    "$id": "https://raw.githubusercontent.com/helmholtz-munich/pipeline_digital_karyotyping/main/nextflow.schema.json",
+    "title": "KaryoExplorer - Digital Karyotyping Pipeline",
+    "description": "Comprehensive Nextflow pipeline for digital karyotyping analysis of Illumina genotyping array data, including CNV detection, ROH analysis, and interactive visualization. Supports both single-sample and paired (PRE/POST) analysis modes.",
     "type": "object",
     "definitions": {
         "input_output_options": {
@@ -11,67 +11,72 @@
             "description": "Define where the pipeline should find input data and save output data.",
             "required": [],
             "properties": {
+                "project_ID": {
+                    "type": "string",
+                    "description": "Project identifier for tracking and organization.",
+                    "help_text": "Unique identifier for your project (e.g., P25101).",
+                    "fa_icon": "fas fa-id-card"
+                },
+                "responsible_person": {
+                    "type": "string",
+                    "description": "Name of the person responsible for the analysis.",
+                    "help_text": "Name of the requester or principal investigator.",
+                    "fa_icon": "fas fa-user"
+                },
                 "samples_refs": {
                     "type": "string",
                     "format": "file-path",
-                    "description": "Path to sample pairing file (XLS format).",
-                    "help_text": "Excel file containing sample-reference pairs defining analysis mode (paired vs single).",
+                    "description": "Path to sample pairing file (XLS/TSV format).",
+                    "help_text": "Sample pairing file with 'Sample' and 'Reference' columns. Run preprocessing/preprocessing_run.sh to generate in XLS format.",
                     "fa_icon": "fas fa-file-excel"
-                },
-                "gsplink": {
-                    "type": "string",
-                    "format": "directory-path",
-                    "description": "Path to PLINK files directory.",
-                    "help_text": "Directory containing PLINK format files (.ped and .map) exported from GenomeStudio.",
-                    "fa_icon": "fas fa-folder"
                 },
                 "manifest": {
                     "type": "string",
                     "format": "file-path",
                     "description": "Path to Illumina array manifest file (CSV format).",
-                    "help_text": "Illumina manifest file containing SNP probe information and genomic coordinates.",
-                    "fa_icon": "fas fa-file-alt"
+                    "help_text": "Illumina manifest file containing SNP probe information and genomic coordinates from GSA-MD-48v4-0_Manifest_Files.",
+                    "fa_icon": "fas fa-file-csv"
+                },
+                "gsplink": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "description": "Path to PLINK files directory.",
+                    "help_text": "Directory containing PLINK format files (.ped and .map) exported from GenomeStudio (e.g., PLINK_<Date>_<Time>).",
+                    "fa_icon": "fas fa-folder"
                 },
                 "PAR": {
                     "type": "string",
                     "format": "file-path", 
-                    "description": "Path to PAR coordinate file.",
-                    "help_text": "File containing pseudoautosomal region coordinates for the reference genome.",
+                    "description": "Path to PAR coordinate file (GRCh37 or GRCh38).",
+                    "help_text": "File containing pseudoautosomal region coordinates. Choose PAR_Coord_GRCh37.txt or PAR_Coord_GRCh38.txt to match your reference genome.",
                     "fa_icon": "fas fa-map-marker-alt"
                 },
                 "fullTable": {
                     "type": "string",
                     "format": "file-path",
-                    "description": "Path to GenomeStudio Full Data Table export.",
+                    "description": "Path to GenomeStudio Full Data Table export (TXT).",
                     "help_text": "Complete SNP data table exported from GenomeStudio containing LRR and BAF values for all samples.",
                     "fa_icon": "fas fa-table"
                 },
                 "samplesTable": {
                     "type": "string", 
                     "format": "file-path",
-                    "description": "Path to GenomeStudio Samples Table export.",
+                    "description": "Path to GenomeStudio Samples Table export (TXT).",
                     "help_text": "Sample metadata table exported from GenomeStudio containing QC metrics and sample information.",
                     "fa_icon": "fas fa-users"
                 },
                 "snpTable": {
                     "type": "string",
                     "format": "file-path", 
-                    "description": "Path to GenomeStudio SNP Table export.",
+                    "description": "Path to GenomeStudio SNP Table export (TXT).",
                     "help_text": "SNP annotation table exported from GenomeStudio with genomic positions and allele information.",
                     "fa_icon": "fas fa-dna"
-                },
-                "nhead": {
-                    "type": "integer",
-                    "description": "Number of header lines to skip in manifest CSV before column headers.",
-                    "help_text": "Number of header lines to skip when reading Illumina manifest files. Standard manifests: 7, Demo/simplified formats: 5. Check your manifest file structure.",
-                    "default": 7,
-                    "minimum": 0,
-                    "fa_icon": "fas fa-list-ol"
                 },
                 "outdir": {
                     "type": "string",
                     "format": "directory-path",
                     "description": "The output directory where the results will be saved.",
+                    "help_text": "Can be specified in params.yaml or via --outdir flag. Default is ./results",
                     "default": "./results",
                     "fa_icon": "fas fa-folder-open"
                 },
@@ -92,8 +97,8 @@
                 "fasta": {
                     "type": "string",
                     "format": "file-path",
-                    "description": "Path to reference genome FASTA file.",
-                    "help_text": "Reference genome FASTA file (GRCh37 or GRCh38) with corresponding index file.",
+                    "description": "Path to reference genome FASTA file (GRCh37 or GRCh38).",
+                    "help_text": "Human reference genome FASTA file. Choose between GRCh37 (hs37) or GRCh38 (hs38) to match your array data and PAR coordinates.",
                     "pattern": "^\\S+\\.fn?a(sta)?(\\.gz)?$",
                     "fa_icon": "fas fa-dna"
                 }
@@ -135,6 +140,15 @@
                     "minimum": 0,
                     "maximum": 0.5,
                     "fa_icon": "fas fa-percentage"
+                },
+                "hetexcess_quality_threshold": {
+                    "type": "number",
+                    "description": "Clonal/inbred sample detection threshold (% of SNPs with HetExcess > 0.95).",
+                    "help_text": "Percentage threshold to flag samples as clonal or inbred based on HetExcess pattern. Higher values indicate related samples that may affect GenomeStudio clustering.",
+                    "default": 20.0,
+                    "minimum": 0,
+                    "maximum": 100,
+                    "fa_icon": "fas fa-dna"
                 }
             }
         },

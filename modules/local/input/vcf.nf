@@ -16,7 +16,7 @@ process VCF_CREATE_FROM_PLINK {
     publishDir "${params.outdir}/2.0_preprocess/2.2_plink", mode: 'copy', overwrite: true
     publishDir "${params.outdir}/0.0_information/0.2_versions/", mode: 'copy', overwrite: true, pattern: "plink.version.txt"
 
-    conda "${baseDir}/env/preproc.yaml"
+    conda 'plink=1.90b6.21'
 
     input:
         path gsplink
@@ -76,46 +76,20 @@ process VCF_CORRECT_REF_ALT {
         # Extract header and body
         echo "[\$(date '+%Y-%m-%d %H:%M:%S')] INFO: Processing VCF header"
         gawk 'BEGIN{FS="\\t";OFS="\\t"}/^#/ && !/ID=(0|25|26)/{print \$0}' plink.vcf | \\
-        sed "s/\\t[0-9]\\+_/\\t/g" | \\
-        awk 'BEGIN{FS="\\t";OFS="\\t"} 
-        /^#CHROM/{
-            # Fix PLINK sample names: if sample is NAME_NAME, keep just NAME
-            for(i=10; i<=NF; i++){
-                n=split(\$i, parts, "_");
-                if(n>=2){
-                    # Check if sample name is duplicated (e.g., "NA06993_R_NA06993_R")
-                    first_half = "";
-                    second_half = "";
-                    for(j=1; j<=int(n/2); j++) first_half = first_half (j>1?"_":"") parts[j];
-                    for(j=int(n/2)+1; j<=n; j++) second_half = second_half (j>int(n/2)+1?"_":"") parts[j];
-                    if(first_half == second_half) \$i = first_half;
-                }
-            }
-        }
-        {print}' > plink.header
+        sed "s/\\t[0-9]\\+_/\\t/g" > plink.header
         
         echo "[\$(date '+%Y-%m-%d %H:%M:%S')] INFO: Processing VCF body and sorting variants"
         gawk 'BEGIN{FS="\\t";OFS="\\t"}!/^#/ && \$1!=0 && \$1!=25 && \$1!=26 {print \$0}' plink.vcf | \\
-        sort -k1,1 -k2,2n > plink.body.all
+        sort -k1,1 -k2,2n > plink.body
         
-        # Filter VCF to only include positions in manifest (using AWK to handle duplicates correctly)
-        echo "[\$(date '+%Y-%m-%d %H:%M:%S')] INFO: Filtering VCF to match manifest positions"
-        gawk 'BEGIN{FS="\\t";OFS="\\t"}
-        NR==FNR{pos[\$1"_"\$2]=1; next}
-        {if(\$1"_"\$2 in pos) print \$0}
-        ' ${manifest_ref} plink.body.all > plink.body
-        
-        # Check counts
+        # Check if manifest and VCF have same number of variants
         manifest_lines=\$(wc -l < ${manifest_ref})
         vcf_lines=\$(wc -l < plink.body)
-        vcf_all_lines=\$(wc -l < plink.body.all)
         
-        echo "[\$(date '+%Y-%m-%d %H:%M:%S')] INFO: Original VCF: \$vcf_all_lines variants"
-        echo "[\$(date '+%Y-%m-%d %H:%M:%S')] INFO: Manifest: \$manifest_lines variants"
-        echo "[\$(date '+%Y-%m-%d %H:%M:%S')] INFO: Filtered VCF: \$vcf_lines variants"
+        echo "[\$(date '+%Y-%m-%d %H:%M:%S')] INFO: Manifest has \$manifest_lines variants, VCF has \$vcf_lines variants"
         
         if [[ \$manifest_lines == \$vcf_lines ]]; then
-            echo "[\$(date '+%Y-%m-%d %H:%M:%S')] INFO: Counts match - correcting reference alleles using manifest"
+            echo "[\$(date '+%Y-%m-%d %H:%M:%S')] INFO: Correcting reference alleles using manifest"
             paste ${manifest_ref} plink.body | \\
             gawk 'BEGIN{FS="\\t";OFS="\\t"}{
                 if ((\$3==\$7) && (\$1==\$4) && (\$2==\$5)) {
@@ -129,9 +103,8 @@ process VCF_CORRECT_REF_ALT {
             
             cat plink.header tmp > plink_corrected.vcf
             echo "[\$(date '+%Y-%m-%d %H:%M:%S')] INFO: VCF reference allele correction completed successfully"
-            echo "Final VCF contains \$(grep -v '^#' plink_corrected.vcf | wc -l) variants"
         else
-            echo "[\$(date '+%Y-%m-%d %H:%M:%S')] ERROR: After filtering, manifest has \$manifest_lines but VCF has \$vcf_lines variants"
+            echo "[\$(date '+%Y-%m-%d %H:%M:%S')] ERROR: Manifest and VCF have different number of variants"
             exit 2
         fi
         """

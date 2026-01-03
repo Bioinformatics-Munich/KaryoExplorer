@@ -178,9 +178,9 @@ def generate_karyotype_plot(
     def _wrap_error(msg: str) -> str:
         return json.dumps({"error": msg})
 
-    # ---------- quick exit ----------------------------------------------
-    if summary_df is None or summary_df.empty:
-        return _wrap_error("No CNV data to plot")
+    # ---------- handle empty data ---------------------------------------
+    # Don't exit early - generate empty plot with message instead
+    is_empty_data = summary_df is None or summary_df.empty
     
 
     try:
@@ -190,14 +190,20 @@ def generate_karyotype_plot(
         if reference_genome not in {"GRCh37", "GRCh38"}:
             raise ValueError(f"Unsupported reference genome: {reference_genome}")
 
-        mode   = _detect_mode(summary_df, (mode or "").lower())
+        # Handle mode detection even with empty data
+        if not is_empty_data:
+            mode = _detect_mode(summary_df, (mode or "").lower())
+        else:
+            mode = (mode or "single").lower()
+        
         gender = _normalise_gender(gender)
 
         if mode not in {"single", "differential"}:
             raise ValueError(f"Unsupported mode: {mode!r}")
 
         plot_width = 1600  
-        plot_height = 900  
+        # Reduce height for empty plots to avoid excessive whitespace
+        plot_height = 600 if is_empty_data else 900
         title       = (
             f"Differential Karyotype – {sample_id} (Gender: {gender})"
             if mode == "differential"
@@ -218,7 +224,7 @@ def generate_karyotype_plot(
         p = figure(
             width=plot_width,
             height=plot_height,
-            sizing_mode="scale_width",
+            sizing_mode="stretch_width" if is_empty_data else "scale_width",
             tools="pan,wheel_zoom,box_zoom,reset,save",
             toolbar_location="above",
             x_axis_label="Chromosome",
@@ -270,12 +276,12 @@ def generate_karyotype_plot(
         # ----------------------------------------------------------------
         # 4. CNV events + styling
         # ----------------------------------------------------------------
-        event_data = prepare_event_data(summary_df, available_chromosomes, mode)
-        add_event_annotations(p, event_data, hover)
+        if not is_empty_data:
+            event_data = prepare_event_data(summary_df, available_chromosomes, mode)
+            add_event_annotations(p, event_data, hover)
+        
         style_plot(p, available_chromosomes)
-
-        # Add this for better default view
-        p.sizing_mode = "stretch_both"  # Utilizes available container space
+        
 
         # p.y_range.start = -10
         p.grid.grid_line_alpha = 0.3
@@ -294,7 +300,11 @@ def generate_karyotype_plot(
         # ----------------------------------------------------------------
         # 5. done → JSON
         # ----------------------------------------------------------------
-        return json.dumps(json_item(p, "karyotype-plot"))
+        # Add empty data flag to the JSON response
+        result = json_item(p, "karyotype-plot")
+        result['is_empty_data'] = is_empty_data
+        
+        return json.dumps(result)
 
     except Exception as exc:
         # Always return *valid* JSON – never None

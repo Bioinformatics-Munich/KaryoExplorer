@@ -315,6 +315,12 @@ class SampleSummaryGenerator:
 
                         <div class="plot-container">
                             <div id="diff-cnv-plot" class="responsive-plot"></div>
+                            <div id="diff-cnv-warning" style="display:none; width:100%; text-align:center; margin:20px 0;">
+                                <div style="display:inline-block; text-align:center; padding:15px; margin:20px auto; max-width:600px; background-color:#fff3cd; border:1px solid #ffc107; border-radius:6px;">
+                                    <i class="fas fa-info-circle" style="color:#856404; font-size:20px;"></i>
+                                    <span style="margin-left:10px; color:#856404; font-size:14px; font-weight:500;">No CNV calls found</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -342,6 +348,12 @@ class SampleSummaryGenerator:
 
                         <div class="plot-container">
                             <div id="diff-karyotype-plot" class="responsive-plot_karyotype"></div>
+                            <div id="diff-karyotype-warning" style="display:none; width:100%; text-align:center; margin:20px 0;">
+                                <div style="display:inline-block; text-align:center; padding:15px; margin:20px auto; max-width:600px; background-color:#fff3cd; border:1px solid #ffc107; border-radius:6px;">
+                                    <i class="fas fa-info-circle" style="color:#856404; font-size:20px;"></i>
+                                    <span style="margin-left:10px; color:#856404; font-size:14px; font-weight:500;">No CNV calls found</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
@@ -657,6 +669,10 @@ class SampleSummaryGenerator:
                                     console.warn('Version mismatch: JS ' + Bokeh._version + ' vs Python ' + diffPlotJson.version);
                                 }}
                                 Bokeh.embed.embed_item(diffPlotJson, "diff-cnv-plot");
+                                // Show warning if data is empty
+                                if (diffPlotJson.is_empty_data) {{
+                                    document.getElementById('diff-cnv-warning').style.display = 'block';
+                                }}
                             }} else {{
                                 const errorMsg = diffPlotJson && diffPlotJson.error ? diffPlotJson.error : 'Failed to load differential visualization';
                                 document.getElementById('diff-cnv-plot').innerHTML = 
@@ -668,6 +684,10 @@ class SampleSummaryGenerator:
                                 const karyotypeJson = {bokeh_differential_karyotype};
                                 if (karyotypeJson && !karyotypeJson.error) {{
                                     Bokeh.embed.embed_item(karyotypeJson, "diff-karyotype-plot");
+                                    // Show warning if data is empty
+                                    if (karyotypeJson.is_empty_data) {{
+                                        document.getElementById('diff-karyotype-warning').style.display = 'block';
+                                    }}
                                 }} else {{
                                     document.getElementById('diff-karyotype-plot').innerHTML = 
                                         '<div class="info-box_empty">' + (karyotypeJson && karyotypeJson.error ? karyotypeJson.error : 'No karyotype data available') + '</div>';

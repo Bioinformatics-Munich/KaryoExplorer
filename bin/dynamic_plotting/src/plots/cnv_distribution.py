@@ -15,12 +15,19 @@ def generate_cnv_distribution_plot(cnv_data, sample_id, available_chromosomes, g
     print(f"Debug - CNV data columns: {cnv_data.columns if cnv_data is not None else 'No data'}")
     print(f"Debug - CNV data entries: {len(cnv_data) if cnv_data is not None else 0}")
     
-    if cnv_data is None or len(cnv_data) == 0:
-        return json.dumps({'error': 'Empty CNV data received'})
+    # Track if data is empty - but don't return error, generate empty plot instead
+    is_empty_data = cnv_data is None or len(cnv_data) == 0
 
     try:
+        # Handle empty data - create empty counts for all chromosomes
+        if is_empty_data:
+            all_chroms = [str(c) for c in available_chromosomes]
+            counts = {
+                k: {c: 0 for c in all_chroms}
+                for k in ['del_medium', 'del_large', 'dup_medium', 'dup_large']
+            }
         # Handle single sample (pre/post) data structure
-        if 'CopyNumber' in cnv_data.columns:  # Single sample case
+        elif 'CopyNumber' in cnv_data.columns:  # Single sample case
             df = cnv_data.copy()
             # Create Type from CopyNumber
             df['Type'] = df['CopyNumber'].apply(
@@ -45,48 +52,52 @@ def generate_cnv_distribution_plot(cnv_data, sample_id, available_chromosomes, g
             df['Length'] = (df['End'] - df['Start']) / 1e6
             df = df[df['Type'].isin(['Deletion', 'Duplication'])]
 
-        # Common processing for both data types
-        df['length_category'] = pd.cut(
-            df['Length'],
-            bins=[0, 0.2, 1.0, float('inf')],
-            labels=['<0.2Mb', '0.2-1.0Mb', '>1.0Mb'],
-            include_lowest=True
-        )
+        # Common processing for data (skip if empty)
+        if not is_empty_data:
+            df['length_category'] = pd.cut(
+                df['Length'],
+                bins=[0, 0.2, 1.0, float('inf')],
+                labels=['<0.2Mb', '0.2-1.0Mb', '>1.0Mb'],
+                include_lowest=True
+            )
 
-        # ------------------------- chromosome sets ------------------------
-        # Convert to strings while preserving order
-        all_chroms = [str(c) for c in available_chromosomes]
-        
-        # Keep ALL chromosomes from available_chromosomes (don't filter df here)
-        # Just ensure we only count chromosomes in the allowed list
-        df['Chromosome'] = df['Chromosome'].astype(str)
-        df = df[df['Chromosome'].isin(all_chroms)]
+            # ------------------------- chromosome sets ------------------------
+            # Convert to strings while preserving order
+            all_chroms = [str(c) for c in available_chromosomes]
+            
+            # Keep ALL chromosomes from available_chromosomes (don't filter df here)
+            # Just ensure we only count chromosomes in the allowed list
+            df['Chromosome'] = df['Chromosome'].astype(str)
+            df = df[df['Chromosome'].isin(all_chroms)]
 
-        # --------------------------- counting -----------------------------
-        # Initialize counts for ALL chromosomes in available_chromosomes
-        counts = {
-            k: {c: 0 for c in all_chroms}
-            for k in ['del_medium', 'del_large', 'dup_medium', 'dup_large']
-        }
+            # --------------------------- counting -----------------------------
+            # Initialize counts for ALL chromosomes in available_chromosomes
+            counts = {
+                k: {c: 0 for c in all_chroms}
+                for k in ['del_medium', 'del_large', 'dup_medium', 'dup_large']
+            }
 
-        for _, row in df.iterrows():
-            chrom = str(row['Chromosome'])
-            cnv_type = row['Type']
-            length_cat = row['length_category']
+            for _, row in df.iterrows():
+                chrom = str(row['Chromosome'])
+                cnv_type = row['Type']
+                length_cat = row['length_category']
 
-            if chrom not in all_chroms:
-                continue  # skip chromosomes not in our list
+                if chrom not in all_chroms:
+                    continue  # skip chromosomes not in our list
 
-            if cnv_type == 'Deletion':
-                if length_cat == '0.2-1.0Mb':
-                    counts['del_medium'][chrom] += 1
-                elif length_cat == '>1.0Mb':
-                    counts['del_large'][chrom] += 1
-            else:
-                if length_cat == '0.2-1.0Mb':
-                    counts['dup_medium'][chrom] += 1
-                elif length_cat == '>1.0Mb':
-                    counts['dup_large'][chrom] += 1
+                if cnv_type == 'Deletion':
+                    if length_cat == '0.2-1.0Mb':
+                        counts['del_medium'][chrom] += 1
+                    elif length_cat == '>1.0Mb':
+                        counts['del_large'][chrom] += 1
+                else:
+                    if length_cat == '0.2-1.0Mb':
+                        counts['dup_medium'][chrom] += 1
+                    elif length_cat == '>1.0Mb':
+                        counts['dup_large'][chrom] += 1
+        else:
+            # Already initialized counts above for empty data
+            all_chroms = [str(c) for c in available_chromosomes]
 
         # --------------------- ColumnDataSource ---------------------------
         cds = {
@@ -199,7 +210,7 @@ def generate_cnv_distribution_plot(cnv_data, sample_id, available_chromosomes, g
 
         banner = Div(text=f"<div style='text-align:center;margin-bottom:12px;'><strong>{gender_text}</strong></div>")
 
-        # For the layout:
+        # Create layout
         layout = column(
             banner, 
             p, 
@@ -207,7 +218,11 @@ def generate_cnv_distribution_plot(cnv_data, sample_id, available_chromosomes, g
             css_classes=['responsive-plot']
         )
 
-        return json.dumps(json_item(layout))
+        # Add empty data flag to the JSON response
+        result = json_item(layout)
+        result['is_empty_data'] = is_empty_data
+        
+        return json.dumps(result)
 
     except Exception as e:
         return json.dumps({'error': str(e)})

@@ -1,8 +1,5 @@
 #!/usr/bin/env Rscript
 
-# Force dot as decimal separator to fix locale issues
-options(OutDec = ".")
-
 # Quality control for SNPs and sample 
 # Written by Lucia Trastulla -- email: lucia_trastulla@psych.mpg.de
 
@@ -119,13 +116,6 @@ Full_table[Full_table == "n. def."] <- NA
 PAR_table <- read.table(PAR_file, header = FALSE, sep = '\t', stringsAsFactors = FALSE, dec=".", skip = 1)
 nsamples <- nrow(Sample_table)
 
-# Automatically detect number of fields per sample
-# First 10 columns are fixed: Index, Name, Address, Chr, Position, GenTrain Score, Frac A, C, G, T
-n_fixed_cols <- 10
-n_sample_cols <- ncol(Full_table) - n_fixed_cols
-fields_per_sample <- n_sample_cols / nsamples
-message("Detected ", fields_per_sample, " fields per sample (", nsamples, " samples, ", ncol(Full_table), " total columns)")
-
 #### produce a txt file which include the cll rate for each sample before and after the quality control
 df_sample_callrate <- data.frame(sample_ID = Sample_table$Sample.ID, Array.Info.Sentrix.ID=Sample_table$Array.Info.Sentrix.ID, Array.Info.Sentrix.Position=Sample_table$Array.Info.Sentrix.Position)
 df_sample_callrate$call_rate <- Sample_table$Call.Rate
@@ -225,7 +215,7 @@ vect_lensnps <- c(vect_lensnps, length(id_SNPs_as))
 #################################################################
 # takes all SNPs from X chromosome
 Full_table_X <- Full_table[which(Full_table$Chr == 'X'),]
-id_column_GT <- as.vector(sapply(0:(nsamples-1), function(x) 11 + (fields_per_sample*x)))
+id_column_GT <- as.vector(sapply(0:(nsamples-1), function(x) 11 + (6*x)))
 
 # summarize
 GT_chrX <- sapply(id_column_GT, function(x) table(Full_table_X[,x]))
@@ -326,22 +316,27 @@ df_sample_callrate$gender <- Sample_table$Gender
 nmale <- length(id_male)
 nfemale <- length(id_female)
 nundef <- length(id_undef)
-registerDoParallel(cores = ncores)
 
-bool_SNP_to_exclude <- foreach(i=1:length(chrX_notPAR_SNPname))%dopar%{
-  #print(i)
-  id <- which(Full_table$Name == chrX_notPAR_SNPname[i])
-  GT_id <- Full_table[id,id_column_GT]
-  GT_male <- GT_id[id_male]
-  (length(which(GT_male == 'AB'))/nmale) > male_frac
+# Only filter X chromosome SNPs if there are male samples
+if(nmale > 0){
+  registerDoParallel(cores = ncores)
+  bool_SNP_to_exclude <- foreach(i=1:length(chrX_notPAR_SNPname))%dopar%{
+    #print(i)
+    id <- which(Full_table$Name == chrX_notPAR_SNPname[i])
+    GT_id <- Full_table[id,id_column_GT]
+    GT_male <- GT_id[id_male]
+    (length(which(GT_male == 'AB'))/nmale) > male_frac
+  }
+  id_SNP_to_exclude <- which(unlist(bool_SNP_to_exclude))
+  name_SNP_toexclude_X <- chrX_notPAR_SNPname[id_SNP_to_exclude]
+}else{
+  # No males, so no X chromosome SNPs to exclude based on male criteria
+  name_SNP_toexclude_X <- c()
 }
-
-id_SNP_to_exclude <- which(unlist(bool_SNP_to_exclude))
-name_SNP_toexclude_X <- chrX_notPAR_SNPname[id_SNP_to_exclude]
 vect_lensnps <- c(vect_lensnps, length(name_SNP_toexclude_X))
 
 #### chr Y
-id_column_R <- as.vector(sapply(0:(nsamples-1), function(x) 14 + (fields_per_sample*x)))
+id_column_R <- as.vector(sapply(0:(nsamples-1), function(x) 14 + (6*x)))
 
 if(length(id_female)>0){
   registerDoParallel(cores = ncores)
@@ -362,8 +357,14 @@ if(length(id_female)>0){
 
 vect_lensnps <- c(vect_lensnps, length(name_SNP_toexclude_Y_female))
 SNP_table_Y_notPAR <- SNP_table[which(SNP_table$Name %in% chrY_notPAR_SNPname),]
-call_freq_hpY_male <- thr_SNPscallrate_fun(nmale)
-name_SNP_toexclude_Y_male <- SNP_table_Y_notPAR$Name[which(SNP_table_Y_notPAR$X..Calls/nmale < call_freq_hpY_male)]
+# Only filter Y chromosome SNPs based on male call frequency if there are males
+if(nmale > 0){
+  call_freq_hpY_male <- thr_SNPscallrate_fun(nmale)
+  name_SNP_toexclude_Y_male <- SNP_table_Y_notPAR$Name[which(SNP_table_Y_notPAR$X..Calls/nmale < call_freq_hpY_male)]
+}else{
+  # No males, so no Y chromosome SNPs to exclude based on male call frequency
+  name_SNP_toexclude_Y_male <- c()
+}
 vect_lensnps <- c(vect_lensnps, length(name_SNP_toexclude_Y_male))
 
 #### save the final name for the SNP to be excluded
@@ -391,16 +392,8 @@ write.table(x = df_excl_SNP, file = file.path(outFile, 'info_QC.txt'), dec = '.'
 id_ft <- which(Full_table$Name %in% name_SNP_toexclude)
 
 # save the correct number of columns for the Full table
-# Note: BAF and LRR might not exist in all data formats (fields 5 and 6 per sample)
-# For 4-field format (GType, Score, Theta, R), use Theta and R as proxies
-if(fields_per_sample >= 6){
-  id_column_BAF <- as.vector(sapply(0:(nsamples-1), function(x) 15 + (fields_per_sample*x)))
-  id_column_LRR <- as.vector(sapply(0:(nsamples-1), function(x) 16 + (fields_per_sample*x)))
-} else {
-  # Use Theta (field 3) and R (field 4) when BAF/LRR not available
-  id_column_BAF <- as.vector(sapply(0:(nsamples-1), function(x) 13 + (fields_per_sample*x)))  # Theta
-  id_column_LRR <- as.vector(sapply(0:(nsamples-1), function(x) 14 + (fields_per_sample*x)))  # R
-}
+id_column_BAF <- as.vector(sapply(0:(nsamples-1), function(x) 15 + (6*x)))
+id_column_LRR <- as.vector(sapply(0:(nsamples-1), function(x) 16 + (6*x)))
 id_initial_info <- 1:10
 
 id_columns <- sort(c(id_initial_info, id_column_GT, id_column_BAF, id_column_LRR))
@@ -416,14 +409,15 @@ n_SNPs <- nrow(Full_table_filt)
 
 id_column_GT_new <-  as.vector(sapply(0:(nsamples-1), function(x) 11 + (3*x)))
 
-if(length(id_female)>0){
+# Check if there are any male or undefined samples (not all female)
+if(length(id_female) < nsamples){
+  # There are some males/undefined samples
   GT_male_undef <- sapply(id_column_GT_new[-id_female], function(x) table(Full_table_filt[,x]))
   colnames(GT_male_undef) <- colnames(Full_table_filt[,id_column_GT_new[-id_female]])
   call_freq_filt_male_undef <- apply(GT_male_undef, 2, function(x) sum(x[1:3])/n_SNPs)
 }else{
-  GT_male_undef <- sapply(id_column_GT_new, function(x) table(Full_table_filt[,x]))
-  colnames(GT_male_undef) <- colnames(Full_table_filt[,id_column_GT_new])
-  call_freq_filt_male_undef <- apply(GT_male_undef, 2, function(x) sum(x[1:3])/n_SNPs)
+  # All samples are female, no males/undefined to process
+  call_freq_filt_male_undef <- numeric(0)
 }
 
 id_chrY <- which(Full_table_filt$Chr == 'Y')
@@ -439,7 +433,10 @@ if(length(id_female)>0){
   colnames(GT_female) <- colnames(Full_table_filt_female[,id_column_GT_new[id_female]])
   call_freq_filt_female <- apply(GT_female, 2, function(x) sum(x[1:3])/n_SNPs_female)
   call_freq_filt[id_female_ST] <- call_freq_filt_female
-  call_freq_filt[-id_female_ST] <- call_freq_filt_male_undef  
+  # Only assign male/undef call frequencies if there are any
+  if(length(call_freq_filt_male_undef) > 0){
+    call_freq_filt[-id_female_ST] <- call_freq_filt_male_undef
+  }
 }else{
   call_freq_filt <- call_freq_filt_male_undef  
 }
@@ -548,17 +545,7 @@ write.table(x = GT_table, file = file.path(outFile,'GT_table.txt'), sep = '\t', 
 ### calculate LRR standard dev
 # Filter out sex chromosomes (X=23, Y=24) before calculating standard deviation
 LRR_table_autosomes <- LRR_table[!(LRR_table$CHROM %in% c('23', '24')), ]
-# Ensure LRR columns are numeric (fix locale issues with comma decimals)
-LRR_columns <- LRR_table_autosomes[, 4:ncol(LRR_table_autosomes)]
-# Convert any character columns to numeric (handles comma decimal separators)
-LRR_columns[] <- lapply(LRR_columns, function(x) {
-  if(is.character(x)) {
-    as.numeric(gsub(",", ".", x))
-  } else {
-    as.numeric(x)
-  }
-})
-stdev_values <- apply(LRR_columns, 2, sd, na.rm = TRUE)
+stdev_values <- apply(LRR_table_autosomes[, 4:ncol(LRR_table_autosomes)], 2, sd, na.rm = TRUE)
 sd_results = data.frame(sample_ID=names(stdev_values), LRR_stdev=stdev_values)
 # save the results
 write.table(x = sd_results, file = file.path(outFile,'LRR_stdev_table.tsv'), sep = '\t', quote = FALSE, dec = '.', row.names = FALSE, col.names = TRUE, na = '.')

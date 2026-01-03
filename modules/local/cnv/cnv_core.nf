@@ -99,7 +99,6 @@ process CNV_ANALYSIS_SINGLE {
         cmd="\$cmd ${vcf_baf_lrr}"
         eval "\$cmd"
 
-        mkdir example2
         
         # Modified validation to check file size
         if [ ! -s "outdir_${pre}/summary.${pre}.tab" ]; then
