@@ -1,4 +1,4 @@
-# KaryoExplorer: Interactive Pipeline for Digital Karyotyping with CNV and LoH Detection
+# KaryoExplorer: An Automated Digital Karyotyping Pipeline with Interactive Visualizations
 
 [![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A524.10.0-23aa62.svg)](https://www.nextflow.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
