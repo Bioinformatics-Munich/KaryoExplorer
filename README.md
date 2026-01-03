@@ -22,11 +22,12 @@ Induced pluripotent stem cells (iPSCs) require routine genomic screening for cop
 - Enables offline browsing with no additional software requirements
 - Ensures reproducibility through Nextflow's containerized workflow management
 
-![Interactive HTML Report Homepage](assets/figures/Home_Page.png)
-*Figure 1: Self-contained interactive report displaying navigation menu, QC summary metrics, and sample overview for paired analysis. Runs locally in any modern web browser.*
-
-![Interactive Report Demo](assets/figures/home_page.gif)
-*Interactive demonstration of the dropdown features and navigation.*
+<div align="center">
+  <img src="assets/figures/Home_Page.png" alt="Interactive HTML Report Homepage" width="38%" />
+  <img src="assets/figures/home_page.gif" alt="Interactive Report Demo" width="60%" />
+  <br>
+  <em>Figure 1: Self-contained interactive report displaying navigation menu, QC summary metrics, and sample overview for paired analysis (left). Interactive demonstration of the dropdown features and navigation (right).</em>
+</div>
 
 
 ---
