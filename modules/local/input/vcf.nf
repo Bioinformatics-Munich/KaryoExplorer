@@ -144,9 +144,15 @@ process VCF_ANNOTATE_BAF_LRR {
         cut -f2 ${fullTable_filt} | sed '1d' > SNPs_QC.txt
         echo "Extracted \$(wc -l < SNPs_QC.txt) QC SNPs"
         
+        # Remove numeric prefixes from sample names in VCF (PLINK adds 1_, 2_, etc.)
+        echo "[\$(date '+%Y-%m-%d %H:%M:%S')] INFO: Removing numeric prefixes from VCF sample names"
+        bcftools query -l ${vcf_corrected} > original_samples.txt
+        sed 's/^[0-9]*_//' original_samples.txt > renamed_samples.txt
+        bcftools reheader -s renamed_samples.txt ${vcf_corrected} > vcf_renamed.vcf
+        
         # Filter VCF with QC SNPs
         echo "[\$(date '+%Y-%m-%d %H:%M:%S')] INFO: Filtering VCF with QC SNPs"
-        vcftools --vcf ${vcf_corrected} --snps SNPs_QC.txt --recode --recode-INFO-all --out vcf_file_QC
+        vcftools --vcf vcf_renamed.vcf --snps SNPs_QC.txt --recode --recode-INFO-all --out vcf_file_QC
         
         # Prepare BAF/LRR files for annotation
         echo "[\$(date '+%Y-%m-%d %H:%M:%S')] INFO: Preparing BAF/LRR files for annotation"

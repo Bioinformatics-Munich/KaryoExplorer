@@ -6,6 +6,7 @@ channels:
 dependencies:
   - r-base=4.3.2
   - r-data.table=1.14.8
+  - r-bit64
   - bioconductor-complexheatmap=2.18.0
   - r-argparse=2.2.3
   - r-doparallel=1.0.17

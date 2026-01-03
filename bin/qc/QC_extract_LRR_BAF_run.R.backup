@@ -5,7 +5,6 @@
 
 suppressPackageStartupMessages(library(argparse))
 suppressPackageStartupMessages(library(doParallel))
-suppressPackageStartupMessages(library(data.table))
 
 parser <- ArgumentParser(description = "Quality control of genomestudio analysis for samples and SNPs" )
 
@@ -82,12 +81,9 @@ source(file.path(fold_fun, 'gt_functions.R'))
 #################
 
 # read the tables
-# Optimized: Use data.table::fread for 10-20x faster loading
-# NOTE: fread() defaults to check.names=FALSE, so we must explicitly set TRUE
-# to convert "Sample ID" -> "Sample.ID" to match existing code expectations
-Sample_table <- as.data.frame(fread(Sample_table_file, header = TRUE, sep = '\t', stringsAsFactors = FALSE, quote = "", dec=",", check.names=TRUE))
-SNP_table <- as.data.frame(fread(SNP_table_file, header = TRUE, sep = '\t', stringsAsFactors = FALSE, quote = "", dec=",", check.names=TRUE))
-Full_table <- as.data.frame(fread(Full_table_file, header = TRUE, sep = '\t', stringsAsFactors = FALSE, quote = "", dec=",", check.names=TRUE))
+Sample_table <- read.table(Sample_table_file, header = TRUE, sep = '\t', stringsAsFactors = FALSE, quote = "", dec=",")
+SNP_table <- read.csv(SNP_table_file, header = TRUE, sep = '\t', stringsAsFactors = FALSE, quote = "", dec=",")
+Full_table <- read.table(Full_table_file, header = TRUE, sep = '\t', stringsAsFactors = FALSE, quote = "", dec=",")
 
 # validate sample names
 is_valid_name <- function(x) grepl("^[A-Za-z][A-Za-z0-9_.]*$", x)
@@ -121,11 +117,11 @@ PAR_table <- read.table(PAR_file, header = FALSE, sep = '\t', stringsAsFactors =
 nsamples <- nrow(Sample_table)
 
 #### produce a txt file which include the cll rate for each sample before and after the quality control
-df_sample_callrate <- data.frame(sample_ID = Sample_table[["Sample.ID"]], Array.Info.Sentrix.ID=Sample_table[["Array.Info.Sentrix.ID"]], Array.Info.Sentrix.Position=Sample_table[["Array.Info.Sentrix.Position"]])
-df_sample_callrate$call_rate <- Sample_table[["Call.Rate"]]
+df_sample_callrate <- data.frame(sample_ID = Sample_table$Sample.ID, Array.Info.Sentrix.ID=Sample_table$Array.Info.Sentrix.ID, Array.Info.Sentrix.Position=Sample_table$Array.Info.Sentrix.Position)
+df_sample_callrate$call_rate <- Sample_table$Call.Rate
 # number od samples with a call rate > 0.98
-nsamples_QC <- length(which(Sample_table[["Call.Rate"]] > 0.98))
-Sample_table[["Sample.ID"]] = gsub('-', '.', Sample_table[["Sample.ID"]])
+nsamples_QC <- length(which(Sample_table$Call.Rate > 0.98))
+Sample_table$Sample.ID = gsub('-', '.', Sample_table$Sample.ID)
 
 ####### removal of snps for autosomal chr ######
 # exclude X, Y (not pseudo autosomal regions) MT and 0 chr
@@ -169,7 +165,7 @@ vect_lensnps <- c(vect_lensnps, length(id_clustsep))
 # call freq
 # to compute the call freq use only the number of samples that pass the quality control
 call_freq_as <- thr_SNPscallrate_fun(nsamples_QC)
-id_callfreq <- which(SNP_table_as[["Call.Freq"]] <= call_freq_as)
+id_callfreq <- which(SNP_table_as$Call.Freq <= call_freq_as)
 vect_lensnps <- c(vect_lensnps, length(id_callfreq))
 # AB R mean
 id_name <-  which(colnames(SNP_table_as) == paste0(manifest_name, '.bpm.AB.R.Mean'))
@@ -188,26 +184,26 @@ id_name <-  which(colnames(SNP_table_as) == paste0(manifest_name, '.bpm.AB.T.Mea
 id_ABTmean <- which(SNP_table_as[,id_name] < ABT_mean_low_as | SNP_table_as[,id_name] > ABT_mean_up_as)
 vect_lensnps <- c(vect_lensnps, length(id_ABTmean))
 # het excess
-id_het <- which(SNP_table_as[["Het.Excess"]] < het_low_as | SNP_table_as[["Het.Excess"]] > het_up_as)
+id_het <- which(SNP_table_as$Het.Excess < het_low_as | SNP_table_as$Het.Excess > het_up_as)
 vect_lensnps <- c(vect_lensnps, length(id_het))
 # MAF
-id_MAF <- which(SNP_table_as[["AB.Freq"]] == 0 & SNP_table_as[["Minor.Freq"]] > MAF_as)
+id_MAF <- which(SNP_table_as$AB.Freq == 0 & SNP_table_as$Minor.Freq > MAF_as)
 vect_lensnps <- c(vect_lensnps, length(id_MAF))
 # AA and BB freq
 id_name <-  which(colnames(SNP_table_as) == paste0(manifest_name, '.bpm.AA.T.Mean'))
-id_AATmean <- which(SNP_table_as[["AA.Freq"]] == 1 & SNP_table_as[, id_name] > AAT_mean_as)
+id_AATmean <- which(SNP_table_as$AA.Freq == 1 & SNP_table_as[, id_name] > AAT_mean_as)
 vect_lensnps <- c(vect_lensnps, length(id_AATmean))
 
 id_name <-  which(colnames(SNP_table_as) == paste0(manifest_name, '.bpm.AA.T.Dev'))
-id_AATdev <- which(SNP_table_as[["AA.Freq"]] == 1 & SNP_table_as[,id_name] > AAT_dev_as)
+id_AATdev <- which(SNP_table_as$AA.Freq == 1 & SNP_table_as[,id_name] > AAT_dev_as)
 vect_lensnps <- c(vect_lensnps, length(id_AATdev))
 
 id_name <-  which(colnames(SNP_table_as) == paste0(manifest_name, '.bpm.BB.T.Mean'))
-id_BBTmean <- which(SNP_table_as[["BB.Freq"]] == 1 & SNP_table_as[,id_name] < BBT_mean_as)
+id_BBTmean <- which(SNP_table_as$BB.Freq == 1 & SNP_table_as[,id_name] < BBT_mean_as)
 vect_lensnps <- c(vect_lensnps, length(id_BBTmean))
 
 id_name <-  which(colnames(SNP_table_as) == paste0(manifest_name, '.bpm.BB.T.Dev'))
-id_BBTdev <- which(SNP_table_as[["BB.Freq"]] == 1 & SNP_table_as[,id_name] > BBT_dev_as)
+id_BBTdev <- which(SNP_table_as$BB.Freq == 1 & SNP_table_as[,id_name] > BBT_dev_as)
 vect_lensnps <- c(vect_lensnps, length(id_BBTdev))
 
 # delete all the SNPs selected
@@ -298,20 +294,20 @@ sample_name_FT <- colnames(GT_chrX)
 
 # add the gender in the loaded Sample_table
 if(length(id_undef)>0){
-  id_undef_ST <- sapply(sample_name_FT[id_undef], function(x) which(x == Sample_table[["Sample.ID"]]))
-  Sample_table[["Gender"]][id_undef_ST] <- "Undef"
+  id_undef_ST <- sapply(sample_name_FT[id_undef], function(x) which(x == Sample_table$Sample.ID))
+  Sample_table$Gender[id_undef_ST] <- "Undef"
 }
 if(length(id_male)>0){
-  id_male_ST <- sapply(sample_name_FT[id_male], function(x) which(x == Sample_table[["Sample.ID"]]))
-  Sample_table[["Gender"]][id_male_ST] <- "Male"
+  id_male_ST <- sapply(sample_name_FT[id_male], function(x) which(x == Sample_table$Sample.ID))
+  Sample_table$Gender[id_male_ST] <- "Male"
 }
 if(length(id_female)>0){
-  id_female_ST <- sapply(sample_name_FT[id_female], function(x) which(x == Sample_table[["Sample.ID"]]))
-  Sample_table[["Gender"]][id_female_ST] <- "Female"
+  id_female_ST <- sapply(sample_name_FT[id_female], function(x) which(x == Sample_table$Sample.ID))
+  Sample_table$Gender[id_female_ST] <- "Female"
 }
 
 # update the new table
-df_sample_callrate$gender <- Sample_table[["Gender"]]
+df_sample_callrate$gender <- Sample_table$Gender
 
 
 #### further filtering of SNPs for the Haploid chromosomes, uses the PAR file
@@ -323,29 +319,15 @@ nundef <- length(id_undef)
 
 # Only filter X chromosome SNPs if there are male samples
 if(nmale > 0){
-  if(ncores > 1){
-    # Use PSOCK cluster for Docker/container compatibility (works better than fork-based mclapply)
-    cl <- makeCluster(ncores, type = "PSOCK")
-    registerDoParallel(cl)
-    bool_SNP_to_exclude <- foreach(i=1:length(chrX_notPAR_SNPname))%dopar%{
-      #print(i)
-      id <- which(Full_table$Name == chrX_notPAR_SNPname[i])
-      GT_id <- Full_table[id,id_column_GT]
-      GT_male <- GT_id[id_male]
-      (length(which(GT_male == 'AB'))/nmale) > male_frac
-    }
-    stopCluster(cl)
-    id_SNP_to_exclude <- which(unlist(bool_SNP_to_exclude))
-  } else {
-    # Sequential processing for single core (avoids memory overhead)
-    bool_SNP_to_exclude <- sapply(1:length(chrX_notPAR_SNPname), function(i){
-      id <- which(Full_table$Name == chrX_notPAR_SNPname[i])
-      GT_id <- Full_table[id,id_column_GT]
-      GT_male <- GT_id[id_male]
-      (length(which(GT_male == 'AB'))/nmale) > male_frac
-    })
-    id_SNP_to_exclude <- which(bool_SNP_to_exclude)
+  registerDoParallel(cores = ncores)
+  bool_SNP_to_exclude <- foreach(i=1:length(chrX_notPAR_SNPname))%dopar%{
+    #print(i)
+    id <- which(Full_table$Name == chrX_notPAR_SNPname[i])
+    GT_id <- Full_table[id,id_column_GT]
+    GT_male <- GT_id[id_male]
+    (length(which(GT_male == 'AB'))/nmale) > male_frac
   }
+  id_SNP_to_exclude <- which(unlist(bool_SNP_to_exclude))
   name_SNP_toexclude_X <- chrX_notPAR_SNPname[id_SNP_to_exclude]
 }else{
   # No males, so no X chromosome SNPs to exclude based on male criteria
@@ -357,32 +339,16 @@ vect_lensnps <- c(vect_lensnps, length(name_SNP_toexclude_X))
 id_column_R <- as.vector(sapply(0:(nsamples-1), function(x) 14 + (6*x)))
 
 if(length(id_female)>0){
-  if(ncores > 1){
-    # Use PSOCK cluster for Docker/container compatibility
-    cl <- makeCluster(ncores, type = "PSOCK")
-    registerDoParallel(cl)
-    bool_SNP_to_exclude <- foreach(i=1:length(chrY_notPAR_SNPname))%dopar%{
-      id <- which(Full_table$Name == chrY_notPAR_SNPname[i])
-      GT_id <- Full_table[id,id_column_GT]
-      GT_female <- GT_id[id_female]
-      R_id <- Full_table[id,id_column_R]
-      R_female <- R_id[id_female] 
-      (length(which(GT_female != 'NC' | R_female > R_hpY))/nfemale) > female_frac
-    }
-    stopCluster(cl)
-    id_SNP_to_exclude <- which(unlist(bool_SNP_to_exclude))
-  } else {
-    # Sequential processing for single core
-    bool_SNP_to_exclude <- sapply(1:length(chrY_notPAR_SNPname), function(i){
-      id <- which(Full_table$Name == chrY_notPAR_SNPname[i])
-      GT_id <- Full_table[id,id_column_GT]
-      GT_female <- GT_id[id_female]
-      R_id <- Full_table[id,id_column_R]
-      R_female <- R_id[id_female] 
-      (length(which(GT_female != 'NC' | R_female > R_hpY))/nfemale) > female_frac
-    })
-    id_SNP_to_exclude <- which(bool_SNP_to_exclude)
+  registerDoParallel(cores = ncores)
+  bool_SNP_to_exclude <- foreach(i=1:length(chrY_notPAR_SNPname))%dopar%{
+    id <- which(Full_table$Name == chrY_notPAR_SNPname[i])
+    GT_id <- Full_table[id,id_column_GT]
+    GT_female <- GT_id[id_female]
+    R_id <- Full_table[id,id_column_R]
+    R_female <- R_id[id_female] 
+    (length(which(GT_female != 'NC' | R_female > R_hpY))/nfemale) > female_frac
   }
+  id_SNP_to_exclude <- which(unlist(bool_SNP_to_exclude))
   name_SNP_toexclude_Y_female <- chrY_notPAR_SNPname[id_SNP_to_exclude] 
 }else{
   name_SNP_toexclude_Y_female <- c()
@@ -484,33 +450,17 @@ write.table(x = Full_table_filt, file = file.path(outFile, 'Full_Data_Table_filt
 ################################## check the genotype (used then for the match) #################################
 GT_samples <- Full_table_filt[, id_column_GT_new]
 
-# Optimized: Convert to matrix once for faster access
-GT_matrix <- as.matrix(GT_samples)
-
 # create a matrix for all the possible combination
-if(ncores > 1){
-  # Use PSOCK cluster for Docker/container compatibility
-  cl <- makeCluster(ncores, type = "PSOCK")
-  registerDoParallel(cl)
+registerDoParallel(cores = ncores)
+
+GT_comp <- foreach(i = 1:(nsamples-1))%dopar%{
+  # for(i in 1:N){
+  print(i)
+  id_in <- rep(i, nsamples-i)
+  id_fin <- (i+1):nsamples
   
-  # Export necessary objects and functions to cluster workers
-  clusterExport(cl, c("GT_matrix", "nsamples", "compareGT"), envir = environment())
-  GT_comp <- foreach(i = 1:(nsamples-1), .combine = 'c')%dopar%{
-    print(i)
-    # Vectorized comparison for all pairs at once
-    sapply((i+1):nsamples, function(j) {
-      compareGT(GT_s1 = GT_matrix[,i], GT_s2 = GT_matrix[,j])
-    })
-  }
-  stopCluster(cl)
-} else {
-  # Sequential processing for single core (memory efficient)
-  GT_comp <- unlist(lapply(1:(nsamples-1), function(i) {
-    print(i)
-    sapply((i+1):nsamples, function(j) {
-      compareGT(GT_s1 = GT_matrix[,i], GT_s2 = GT_matrix[,j])
-    })
-  }))
+  # s_m_vect <- c(s_m_vect, mapply(function(x,y) frobenious_dotprod(X[[x]],X[[y]],K), x = id_in, y = id_fin))
+  mapply(function(x,y) compareGT(GT_s1 = GT_samples[,x], GT_s2 = GT_samples[,y]), x = id_in, y = id_fin)
 }
 
 GT_comp_vect <- unlist(GT_comp)
@@ -563,20 +513,26 @@ LRR_table <- vector(mode = 'list', length = length(unique(LRR_table_temp$CHROM))
 BAF_table <- vector(mode = 'list', length = length(unique(LRR_table_temp$CHROM)))
 GT_table <- vector(mode = 'list', length = length(unique(LRR_table_temp$CHROM)))
 
-# Optimized: Use data.table for much faster sorting (vectorized operations)
-LRR_dt <- as.data.table(LRR_table_temp)
-BAF_dt <- as.data.table(BAF_table_temp)
-GT_dt <- as.data.table(GT_table_temp)
+for(id  in 1:length(unique(LRR_table_temp$CHROM))){
+  
+  print(id)
+  chr <- unique(LRR_table_temp$CHROM)[id]
+  
+  LRR_chr <- LRR_table_temp[LRR_table_temp$CHROM == chr,]
+  BAF_chr <- BAF_table_temp[BAF_table_temp$CHROM == chr,]
+  GT_chr <- GT_table_temp[GT_table_temp$CHROM == chr,]
+  
+  ord_CHR <- order(LRR_chr$POS)
+  
+  LRR_table[[id]] <- LRR_chr[ord_CHR,]
+  BAF_table[[id]] <- BAF_chr[ord_CHR,]
+  GT_table[[id]] <-  GT_chr[ord_CHR,]
+  
+}
 
-# Sort by chromosome and position in one operation (much faster than loop)
-setorder(LRR_dt, CHROM, POS)
-setorder(BAF_dt, CHROM, POS)
-setorder(GT_dt, CHROM, POS)
-
-# Convert back to data.frame for compatibility with downstream code
-LRR_table <- as.data.frame(LRR_dt)
-BAF_table <- as.data.frame(BAF_dt)
-GT_table <- as.data.frame(GT_dt)
+LRR_table <- do.call(rbind, LRR_table)
+BAF_table <- do.call(rbind, BAF_table)
+GT_table <- do.call(rbind, GT_table)
 
 # replace NA with dot
 
