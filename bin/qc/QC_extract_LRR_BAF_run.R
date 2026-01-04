@@ -327,7 +327,7 @@ if(nmale > 0){
     # Use PSOCK cluster for Docker/container compatibility (works better than fork-based mclapply)
     cl <- makeCluster(ncores, type = "PSOCK")
     registerDoParallel(cl)
-    bool_SNP_to_exclude <- foreach(i=1:length(chrX_notPAR_SNPname))%dopar%{
+    bool_SNP_to_exclude <- foreach(i=seq_along(chrX_notPAR_SNPname))%dopar%{
       #print(i)
       id <- which(Full_table$Name == chrX_notPAR_SNPname[i])
       GT_id <- Full_table[id,id_column_GT]
@@ -338,7 +338,7 @@ if(nmale > 0){
     id_SNP_to_exclude <- which(unlist(bool_SNP_to_exclude))
   } else {
     # Sequential processing for single core (avoids memory overhead)
-    bool_SNP_to_exclude <- sapply(1:length(chrX_notPAR_SNPname), function(i){
+    bool_SNP_to_exclude <- sapply(seq_along(chrX_notPAR_SNPname), function(i){
       id <- which(Full_table$Name == chrX_notPAR_SNPname[i])
       GT_id <- Full_table[id,id_column_GT]
       GT_male <- GT_id[id_male]
@@ -361,7 +361,7 @@ if(length(id_female)>0){
     # Use PSOCK cluster for Docker/container compatibility
     cl <- makeCluster(ncores, type = "PSOCK")
     registerDoParallel(cl)
-    bool_SNP_to_exclude <- foreach(i=1:length(chrY_notPAR_SNPname))%dopar%{
+    bool_SNP_to_exclude <- foreach(i=seq_along(chrY_notPAR_SNPname))%dopar%{
       id <- which(Full_table$Name == chrY_notPAR_SNPname[i])
       GT_id <- Full_table[id,id_column_GT]
       GT_female <- GT_id[id_female]
@@ -373,7 +373,7 @@ if(length(id_female)>0){
     id_SNP_to_exclude <- which(unlist(bool_SNP_to_exclude))
   } else {
     # Sequential processing for single core
-    bool_SNP_to_exclude <- sapply(1:length(chrY_notPAR_SNPname), function(i){
+    bool_SNP_to_exclude <- sapply(seq_along(chrY_notPAR_SNPname), function(i){
       id <- which(Full_table$Name == chrY_notPAR_SNPname[i])
       GT_id <- Full_table[id,id_column_GT]
       GT_female <- GT_id[id_female]
