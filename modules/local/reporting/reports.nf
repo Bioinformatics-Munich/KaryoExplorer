@@ -30,11 +30,14 @@ process PARAMETER_REPORT {
         cat > pipeline_parameters.json << EOF
         {
             "pipeline_info": {
-                "name": "Digital Karyotyping Pipeline",
-                "version": "2.0",
+                "name": "${params.app_name}",
+                "version": "${params.pipeline_version}",
                 "run_date": "\$(date)",
                 "nextflow_version": "${workflow.nextflow.version}",
-                "command_line": "${workflow.commandLine}"
+                "command_line": "${workflow.commandLine}",
+                "profile": "${workflow.profile}",
+                "work_dir": "${workflow.workDir}",
+                "project_dir": "${workflow.projectDir}"
             },
             "project_info": {
                 "project_ID": "${params.project_ID}",
@@ -93,11 +96,12 @@ EOF
 
         # Create Markdown parameter report
         cat > parameter_report.md << EOF
-# Digital Karyotyping Pipeline - Parameter Report
+# ${params.app_name} - Parameter Report
 
 **Generated on:** \$(date)  
-**Pipeline Version:** 2.0  
+**Pipeline Version:** ${params.pipeline_version}  
 **Nextflow Version:** ${workflow.nextflow.version}  
+**Profile:** ${workflow.profile}  
 
         ## Command Line
         \\`\\`\\`
