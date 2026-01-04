@@ -24,7 +24,7 @@ When you execute `nextflow run main.nf -profile conda`, Nextflow automatically c
 
 ## Modular Environments (Automatically Managed)
 
-These environments are automatically created by Nextflow during pipeline execution. You don't need to create them manually.
+These environments are automatically created by Nextflow during pipeline execution (via Conda, Docker or Singularity). You don't need to create them manually.
 
 ```
 env/

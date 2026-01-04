@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>Digital Karyotyping Pipeline - Output Guide</title>
+  <title>KaryoExplorer - Output Guide</title>
   <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -195,7 +195,7 @@ color: #155724;
 </head>
 <body>
 <header id="title-block-header">
-<h1 class="title">Digital Karyotyping Pipeline - Output Guide</h1>
+<h1 class="title">KaryoExplorer - Output Guide</h1>
 </header>
 <nav id="TOC" role="doc-toc">
 <ul>
@@ -223,10 +223,10 @@ Preprocessing</a></li>
 <li><a href="#sample_annotation" id="toc-sample_annotation">3.0_sample_annotation</a></li>
 <li><a href="#roh_loh_analysis---runs-of-homozygosity-loss-of-heterozygosity" id="toc-roh_loh_analysis---runs-of-homozygosity-loss-of-heterozygosity">4.0_roh_loh_analysis
 - Runs of Homozygosity &amp; Loss of Heterozygosity</a></li>
-<li><a href="#karyoplayground_preprocessing" id="toc-karyoplayground_preprocessing">5.0_KaryoPlayground_preprocessing</a></li>
-<li><a href="#karyoplayground_single---interactive-single-sample-results" id="toc-karyoplayground_single---interactive-single-sample-results">5.1_KaryoPlayground_single
-- Interactive Single Sample Results</a></li>
-<li><a href="#karyoplayground_paired---interactive-paired-sample-results" id="toc-karyoplayground_paired---interactive-paired-sample-results">5.2_KaryoPlayground_paired
+<li><a href="#karyoexplorer_preprocessing" id="toc-karyoexplorer_preprocessing">5.0_KaryoExplorer_preprocessing</a></li>
+<li><a href="#karyoexplorer_single---interactive-single-sample-results" id="toc-karyoexplorer_single---interactive-single-sample-results">5.1_KaryoExplorer_single
+- Interactive single Sample Results</a></li>
+<li><a href="#karyoexplorer_paired---interactive-paired-sample-results" id="toc-karyoexplorer_paired---interactive-paired-sample-results">5.2_KaryoExplorer_paired
 - Interactive Paired Sample Results</a></li>
 </ul></li>
 <li><a href="#table-headers-reference" id="toc-table-headers-reference">Table Headers Reference</a>
@@ -294,8 +294,8 @@ following structure:</p>
 ├── README.html                              # This documentation file
 ├── 0.0_information/                         # Pipeline metadata and logs
 │   ├── 0.1_pipeline_logs/                   # Process-specific log files
-│   │   ├── 5.1_KaryoPlayground_single_logs/
-│   │   └── 5.2_KaryoPlayground_paired_logs/
+│   │   ├── 5.1_KaryoExplorer_single_logs/
+│   │   └── 5.2_KaryoExplorer_paired_logs/
 │   ├── 0.2_versions/                        # Software version information
 │   │   ├── bcftools.version.txt
 │   │   ├── plink.version.txt
@@ -317,9 +317,9 @@ following structure:</p>
 ├── 4.0_roh_loh_analysis/                    # Runs of Homozygosity &amp; Loss of Heterozygosity
 │   ├── 4.1_roh_loh_single/                  # Single sample ROH/LOH analysis
 │   └── 4.2_roh_loh_paired/                  # Paired sample ROH/LOH analysis
-├── 5.0_KaryoPlayground_preprocessing/       # Data preparation for visualization
-├── 5.1_KaryoPlayground_single/              # Interactive single sample results
-└── 5.2_KaryoPlayground_paired/              # Interactive paired sample results</code></pre>
+├── 5.0_KaryoExplorer_preprocessing/            # Data preparation for visualization
+├── 5.1_KaryoExplorer_single/                 # Interactive single sample results
+└── 5.2_KaryoExplorer_paired/                   # Interactive paired sample results</code></pre>
 <hr />
 <h2 id="quick-start---your-main-results">Quick Start - Your Main
 Results</h2>
@@ -328,8 +328,8 @@ Results</h2>
 multiple directories, but the <strong>main interactive results</strong>
 you’ll want to access are:</p>
 <h3 id="for-single-sample-analysis">For Single Sample Analysis:</h3>
-<p>Navigate to <strong><code>5.1_KaryoPlayground_single/</code></strong>
-and open <code>KaryoPlayground.html</code> in your web browser (Chrome
+<p>Navigate to <strong><code>5.1_KaryoExplorer_single/</code></strong>
+and open <code>KaryoExplorer.html</code> in your web browser (Chrome
 recommended).</p>
 <p><strong>What you’ll find:</strong></p>
 <ul>
@@ -342,8 +342,8 @@ plots</p></li>
 interface</p></li>
 </ul>
 <h3 id="for-paired-sample-analysis">For Paired Sample Analysis:</h3>
-<p>Navigate to <strong><code>5.2_KaryoPlayground_paired/</code></strong>
-and open <code>KaryoPlayground.html</code> in your web browser (Chrome
+<p>Navigate to <strong><code>5.2_KaryoExplorer_paired/</code></strong>
+and open <code>KaryoExplorer.html</code> in your web browser (Chrome
 recommended).</p>
 <p><strong>What you’ll find:</strong></p>
 <ul>
@@ -375,10 +375,10 @@ versions.</p>
 and tracking</li>
 <li><strong>Subdirectories</strong>:
 <ul>
-<li><code>5.1_KaryoPlayground_single_logs/</code>: Logs from single
-sample visualization</li>
-<li><code>5.2_KaryoPlayground_paired_logs/</code>: Logs from paired
-sample visualization</li>
+<li><code>5.1_KaryoExplorer_single_logs/</code>: Logs from single sample
+visualization</li>
+<li><code>5.2_KaryoExplorer_paired_logs/</code>: Logs from paired sample
+visualization</li>
 </ul></li>
 </ul>
 <h4 id="versions">0.2_versions</h4>
@@ -550,7 +550,7 @@ and differential analysis</li>
 </ul></li>
 </ul>
 <hr />
-<h3 id="karyoplayground_preprocessing">5.0_KaryoPlayground_preprocessing</h3>
+<h3 id="karyoexplorer_preprocessing">5.0_KaryoExplorer_preprocessing</h3>
 <p>Standardized data collection and formatting for interactive
 visualization.</p>
 <p><strong>Purpose</strong>: Collects all analysis results and
@@ -597,17 +597,17 @@ regions</p></li>
 <li><p><code>post_*</code> files: Individual POST sample data</p></li>
 </ul>
 <hr />
-<h3 id="karyoplayground_single---interactive-single-sample-results">5.1_KaryoPlayground_single
-- Interactive Single Sample Results</h3>
+<h3 id="karyoexplorer_single---interactive-single-sample-results">5.1_KaryoExplorer_single
+- Interactive single Sample Results</h3>
 <p><strong>This is your main result for single sample
 analysis!</strong></p>
 <p><strong>Purpose</strong>: Interactive HTML-based visualization for
 exploring CNV and ROH patterns in individual samples.</p>
 <p><strong>How to Access</strong>: 1. Open
-<code>KaryoPlayground.html</code> (or configured app name) in a web
-browser (Chrome recommended) 2. Click the <strong>ℹ</strong> (info) icon
-for detailed usage instructions 3. Navigate through samples and
-chromosomes using the interactive interface</p>
+<code>KaryoExplorer.html</code> in a web browser (Chrome recommended) 2.
+Click the <strong>ℹ</strong> (info) icon for detailed usage instructions
+3. Navigate through samples and chromosomes using the interactive
+interface</p>
 <p><strong>Key Features</strong>:</p>
 <ul>
 <li><p>Chromosome-specific visualizations with interactive
@@ -623,7 +623,7 @@ directory as <code>samples/</code> and <code>components/</code> folders
 to function properly.</p>
 </blockquote>
 <hr />
-<h3 id="karyoplayground_paired---interactive-paired-sample-results">5.2_KaryoPlayground_paired
+<h3 id="karyoexplorer_paired---interactive-paired-sample-results">5.2_KaryoExplorer_paired
 - Interactive Paired Sample Results</h3>
 <p><strong>This is your main result for paired sample
 analysis!</strong></p>
@@ -631,10 +631,9 @@ analysis!</strong></p>
 exploring differential CNV and ROH patterns between PRE and POST
 samples.</p>
 <p><strong>How to Access</strong>: 1. Open
-<code>KaryoPlayground.html</code> (or configured app name) in a web
-browser (Chrome recommended) 2. Click the <strong>ℹ</strong> (info) icon
-for detailed usage instructions 3. Explore differential patterns between
-sample pairs</p>
+<code>KaryoExplorer.html</code> in a web browser (Chrome recommended) 2.
+Click the <strong>ℹ</strong> (info) icon for detailed usage instructions
+3. Explore differential patterns between sample pairs</p>
 <p><strong>Key Features</strong>:</p>
 <ul>
 <li><p>Side-by-side PRE/POST comparison</p></li>
@@ -733,9 +732,9 @@ et al.</a>)</td>
 <li>ROH/LOH Analysis
 (<code>4.0_roh_loh_analysis/4.1_roh_loh_single/</code>)</li>
 <li>Data Preparation
-(<code>5.0_KaryoPlayground_preprocessing/</code>)</li>
+(<code>5.0_KaryoExplorer_preprocessing/</code>)</li>
 <li><strong>Interactive Results</strong>
-(<code>5.1_KaryoPlayground_single/</code>)</li>
+(<code>5.1_KaryoExplorer_single/</code>)</li>
 </ol>
 <h3 id="paired-mode-workflow">Paired Mode Workflow</h3>
 <ol type="1">
@@ -745,9 +744,9 @@ et al.</a>)</td>
 <li>ROH/LOH Analysis
 (<code>4.0_roh_loh_analysis/4.2_roh_loh_paired/</code>)</li>
 <li>Data Preparation
-(<code>5.0_KaryoPlayground_preprocessing/</code>)</li>
+(<code>5.0_KaryoExplorer_preprocessing/</code>)</li>
 <li><strong>Interactive Results</strong>
-(<code>5.2_KaryoPlayground_paired/</code>)</li>
+(<code>5.2_KaryoExplorer_paired/</code>)</li>
 </ol>
 <hr />
 <h2 id="usage-tips">Usage Tips</h2>
@@ -755,8 +754,8 @@ et al.</a>)</td>
 <ul>
 <li><strong>Quick Start</strong>: Open the main <code>README.html</code>
 (this file) for an overview, then navigate to
-<code>5.1_KaryoPlayground_single/</code> or
-<code>5.2_KaryoPlayground_paired/</code> for interactive results</li>
+<code>5.1_KaryoExplorer_single/</code> or
+<code>5.2_KaryoExplorer_paired/</code> for interactive results</li>
 <li><strong>Browser Compatibility</strong>: Chrome is recommended for
 best performance</li>
 <li><strong>File Integrity</strong>: Do not move HTML files outside
@@ -792,7 +791,7 @@ https://gitlab.mpcdf.mpg.de/luciat/cnv_detection</p></li>
 <p><strong>Pipeline Version</strong>: 2.0<br />
 <strong>Last Updated</strong>: 2025</p>
 <h1 id="software-versions">Software Versions</h1>
-<p><strong>Generated on:</strong> Fri Oct 17 15:09:28 CEST 2025</p>
+<p><strong>Generated on:</strong> Tue Dec 30 06:02:06 CET 2025</p>
 <h2 id="tools-used">Tools Used</h2>
 <ul>
 <li><strong>R Version:</strong></li>

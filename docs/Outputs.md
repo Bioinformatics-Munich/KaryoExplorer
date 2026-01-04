@@ -30,7 +30,7 @@ results/
 ├── README.html                              # This documentation file
 ├── 0.0_information/                         # Pipeline metadata and logs
 │   ├── 0.1_pipeline_logs/                   # Process-specific log files
-│   │   ├── 5.1_<app_name>_unpaired_logs/
+│   │   ├── 5.1_<app_name>_single_logs/
 │   │   └── 5.2_<app_name>_paired_logs/
 │   ├── 0.2_versions/                        # Software version information
 │   │   ├── bcftools.version.txt
@@ -54,7 +54,7 @@ results/
 │   ├── 4.1_roh_loh_single/                  # Single sample ROH/LOH analysis
 │   └── 4.2_roh_loh_paired/                  # Paired sample ROH/LOH analysis
 ├── 5.0_<app_name>_preprocessing/            # Data preparation for visualization
-├── 5.1_<app_name>_unpaired/                 # Interactive unpaired sample results
+├── 5.1_<app_name>_single/                 # Interactive single sample results
 └── 5.2_<app_name>_paired/                   # Interactive paired sample results
 ```
 
@@ -67,7 +67,7 @@ results/
 The pipeline generates comprehensive outputs organized across multiple directories, but the **main interactive results** you'll want to access are:
 
 ### For Single Sample Analysis:
-Navigate to **`5.1_<app_name>_unpaired/`** and open `<app_name>.html` in your web browser (Chrome recommended).
+Navigate to **`5.1_<app_name>_single/`** and open `<app_name>.html` in your web browser (Chrome recommended).
 
 **What you'll find:**
 
@@ -108,7 +108,7 @@ Contains all pipeline execution information, logs, and software versions.
 #### 0.1_pipeline_logs
 - **Purpose**: Process-specific log files for debugging and tracking
 - **Subdirectories**:
-  - `5.1_<app_name>_unpaired_logs/`: Logs from unpaired sample visualization
+  - `5.1_<app_name>_single_logs/`: Logs from single sample visualization
   - `5.2_<app_name>_paired_logs/`: Logs from paired sample visualization
 
 #### 0.2_versions
@@ -272,9 +272,9 @@ Standardized data collection and formatting for interactive visualization.
 
 ---
 
-### 5.1_<app_name>_unpaired - Interactive Unpaired Sample Results
+### 5.1_<app_name>_single - Interactive single Sample Results
 
-**This is your main result for unpaired sample analysis!**
+**This is your main result for single sample analysis!**
 
 **Purpose**: Interactive HTML-based visualization for exploring CNV and ROH patterns in individual samples.
 
@@ -359,7 +359,7 @@ Standardized data collection and formatting for interactive visualization.
 3. Sample Annotation (`3.0_sample_annotation/`)
 4. ROH/LOH Analysis (`4.0_roh_loh_analysis/4.1_roh_loh_single/`)
 5. Data Preparation (`5.0_<app_name>_preprocessing/`)
-6. **Interactive Results** (`5.1_<app_name>_unpaired/`)
+6. **Interactive Results** (`5.1_<app_name>_single/`)
 
 ### Paired Mode Workflow
 1. Quality Control (`1.0_quality_control/`)
@@ -374,7 +374,7 @@ Standardized data collection and formatting for interactive visualization.
 ## Usage Tips
 
 ### Accessing Results
-- **Quick Start**: Open the main `README.html` (this file) for an overview, then navigate to `5.1_<app_name>_unpaired/` or `5.2_<app_name>_paired/` for interactive results
+- **Quick Start**: Open the main `README.html` (this file) for an overview, then navigate to `5.1_<app_name>_single/` or `5.2_<app_name>_paired/` for interactive results
 - **Browser Compatibility**: Chrome is recommended for best performance
 - **File Integrity**: Do not move HTML files outside their directories; they depend on relative paths to `components/` and `samples/` folders
 

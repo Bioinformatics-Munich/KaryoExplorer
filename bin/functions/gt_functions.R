@@ -2,29 +2,16 @@
 # Written by Lucia Trastulla -- email: lucia_trastulla@psych.mpg.de
 
 # compare two genotypes
-compareGT <- function(GT_s1,GT_s2){
+# Optimized version: vectorized comparison while preserving original logic
+compareGT <- function(GT_s1, GT_s2){
   
   cond_stop <- (length(GT_s1) == length(GT_s2))
   if(!cond_stop){stop('not same length')}
   
-  GT_s1 <- as.factor(GT_s1)
-  GT_s2 <- as.factor(GT_s2)
-  
-  level_GT <- levels(GT_s1)
-  intersect_GT <- vector(mode = 'list', length = length(level_GT))
-  
-  for (i in 1:length(level_GT)){
-    
-    id_1 <- which(GT_s1 == level_GT[i])
-    id_2 <- which(GT_s2 == level_GT[i])
-    
-    intersect_GT[[i]] <- intersect(id_1,id_2)   
-  }
-  
-  # percetange of same GT
-  return(sum(sapply(intersect_GT, length))/length(GT_s1))
-  
-  
+  # Direct vector comparison - much faster than factor-based intersection
+  # This preserves the original logic: count all matching positions (including NC==NC)
+  # divided by total positions
+  return(sum(GT_s1 == GT_s2) / length(GT_s1))
 }
 
 
