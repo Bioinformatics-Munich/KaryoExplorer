@@ -89,8 +89,8 @@ cd my_project_ID
 ### 2. Clone Repository
 
 ```bash
-git clone <repository-url>
-cd pipeline_digital_karyotyping
+git clone https://github.com/Bioinformatics-Munich/KaryoExplorer.git
+cd KaryoExplorer
 ```
 
 ### 3. Configure Parameters
@@ -250,7 +250,7 @@ my_project_ID/                                 # Main project directory (e.g., P
 │   └── reference_genome/                      # Reference genome files
 │       ├── Homo_sapiens.GRCh38.dna.primary_assembly.fa     # Reference FASTA
 │       └── Homo_sapiens.GRCh38.dna.primary_assembly.fa.fai # FASTA index
-├── pipeline_digital_karyotyping/              # Pipeline directory (cloned repository)
+├── KaryoExplorer/              # Pipeline directory (cloned repository)
 │   ├── main.nf                                # Main Nextflow workflow
 │   ├── nextflow.config                        # Pipeline configuration
 │   ├── params.yaml                            # Project-specific parameters (copied from template)
@@ -411,7 +411,7 @@ name_analyst    = ''
 
 Customize the logos displayed in the interactive web application:
 
-1. **Navigate to the assets directory**: `pipeline_digital_karyotyping/assets/logo/`
+1. **Navigate to the assets directory**: `assets/logo/`
 2. **Replace the existing logo files** with your custom logos:
    - `left_icon.png` - Left side logo/icon (typically institutional logo)
    - `right_icon.png` - Right side logo/icon (typically project logo)
