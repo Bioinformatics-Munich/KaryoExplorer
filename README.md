@@ -13,10 +13,11 @@ A Nextflow-based, containerized pipeline for copy number variation (CNV) and los
 
 ## Summary
 
-Induced pluripotent stem cells (iPSCs) require routine genomic screening for copy number variations and loss of heterozygosity to ensure quality and safety. Current workflows are fragmented, requiring multiple tools, manual data manipulation, and non-shareable visualizations.
+This digital karyotyping pipeline detects de novo copy number abnormalities arising in cultured cell lines, i.e., to determine differences between cell lines and the starting material from which they were derived in terms of copy number variation. The genomic screening for chromosomal abnormalities can be used as quality control to establish and maintain stem cell lines.
+
 
 **KaryoExplorer** standardizes this workflow into a single, reproducible pipeline that:
-- Performs CNV and LoH analysis from Illumina genotyping array data
+- Performs CNV and LoH analysis from Illumina Infinnium genotyping array data
 - Detects copy-neutral LoH (cnLoH) by overlaying runs of homozygosity with copy number states
 - Generates self-contained, interactive HTML reports with synchronized BAF/LRR/CN visualizations
 - Enables offline browsing with no additional software requirements
@@ -26,7 +27,7 @@ Induced pluripotent stem cells (iPSCs) require routine genomic screening for cop
   <img src="assets/figures/Home_Page.png" alt="Interactive HTML Report Homepage" width="38%" />
   <img src="assets/figures/home_page.gif" alt="Interactive Report Demo" width="60%" />
   <br>
-  <em>Figure 1: Self-contained interactive report displaying navigation menu, QC summary metrics, and sample overview for paired analysis (left). Interactive demonstration of the dropdown features and navigation (right).</em>
+  <em>Figure 1: Self-contained interactive report displaying navigation menu, QC summary metrics, and sample overview for paired analysis (left). Interactive demonstration of the illumina data results, dropdown features and navigation. Source: Illumina 2024 Infinium Global Screening Array v4.0 Used under license from Illumina, Inc. All Rights Reserved (right).</em>
 </div>
 
 
@@ -36,10 +37,10 @@ Induced pluripotent stem cells (iPSCs) require routine genomic screening for cop
 
 ### Analysis Capabilities
 - **Dual Analysis Modes**: Single-sample and paired (PRE→POST) analysis with differential views
-- **CNV Detection**: Deletions and duplications from BAF/LRR segmentation using bcftools cnv
-- **LoH Detection**: Runs of homozygosity (ROH) identification using bcftools roh HMM
+- **CNV Detection**: Deletions and duplications from BAF/LRR segmentation using bcftools cnv algorithm
+- **LoH Detection**: Runs of homozygosity (ROH) identification using bcftools roh algorithm
 - **cnLoH Classification**: Automatic detection of copy-neutral LoH (CN=2 ∩ ROH) and copy-loss LoH (CN<2 ∩ ROH)
-- **Quality Control**: Comprehensive QC metrics, IBD analysis, and sample matching
+- **Quality Control**: Detailed QC metrics, IBD analysis, and sample matching
 
 ### Interactive Visualization (KaryoExplorer)
 - **Multi-page HTML application**: Genome-wide karyograms with synchronized chromosome views
@@ -48,45 +49,18 @@ Induced pluripotent stem cells (iPSCs) require routine genomic screening for cop
 - **Export capabilities**: Per-page Print-to-PDF preserving current zoom/selection; built-in PNG export for publication
 - **Searchable tables**: Filterable, sortable CNV and LoH event tables with export functions
 
-![Genome-wide Karyograms](docs/Joss_Paper/figures/pre_post_diff_karyograms.png)
-*Figure 2: Synchronized PRE (donor) and POST (iPSC) karyograms. CNV segments are color-coded (deletions in blue, duplications in red) with size indicating magnitude and opacity reflecting statistical significance.*
+![Genome-wide Karyograms](assets/figures/karyogram.gif)
+*Figure 2: Synchronized PRE (donor) and POST (iPSC) karyograms. CNV segments are color-coded (deletions in blue, duplications in red) with size indicating magnitude and opacity reflecting statistical significance. Source: Illumina 2024 Infinium Global Screening Array v4.0 Used under license from Illumina, Inc. All Rights Reserved.*
+
+![Chromosome-level Visualization](assets/figures/chrosome_view.gif)
+*Figure 3: Interactive chromosome-level BAF, LRR, and copy number tracks in paired mode. ROH segments and candidate cnLoH regions are highlighted. LRR plots overlay segment boundaries and mean values to aid deviation assessment. Source: Illumina 2024 Infinium Global Screening Array v4.0 Used under license from Illumina, Inc. All Rights Reserved.*
 
 ### Reproducibility & Scalability
 - **Containerized execution**: Docker, Singularity/Apptainer support
 - **Workflow management**: Nextflow DSL2 with automatic provenance tracking
-- **HPC-ready**: SLURM templates with optimized resource allocation
+- **HPC-ready**: SLURM configuration and templates with optimized resource allocation
 - **Version control**: Automatic software version and parameter logging
 
-![Chromosome-level Visualization](docs/Joss_Paper/figures/pre_post_LRR_BAF.png)
-*Figure 3: Interactive chromosome-level BAF, LRR, and copy number tracks in paired mode. ROH segments and candidate cnLoH regions are highlighted. LRR plots overlay segment boundaries and mean values to aid deviation assessment.*
-
----
-
-## Statement of Need
-
-Digital karyotyping of iPSC lines is widely practiced, but current workflows suffer from fragmentation. Labs typically:
-- Use separate tools for CNV and ROH/LoH analysis
-- Manually combine tables, screenshots, and scripts
-- Struggle with result sharing and reproducibility
-- Lack integrated visualization of BAF, LRR, and copy number states
-
-**KaryoExplorer addresses these challenges by:**
-1. **Standardizing analysis**: Single pipeline from raw data to publication-ready results
-2. **Integrating interpretation**: Unified visualization of CNV, LoH, and cnLoH in context
-3. **Enabling collaboration**: Self-contained HTML reports sharable via email or web
-4. **Ensuring reproducibility**: Containerized workflow with complete provenance tracking
-
-### Comparison with Existing Tools
-
-| Feature | KaryoExplorer | PennCNV/QuantiSNP | GenomeStudio | ASCAT |
-|---------|----------------|-------------------|--------------|--------|
-| Open source | Yes | Yes | No | Yes |
-| Paired analysis | Yes | Limited | Limited | Yes (cancer-focused) |
-| cnLoH detection | Integrated | Manual | Manual | Yes |
-| Interactive visualization | Yes | No | GUI only | No |
-| Reproducible workflow | Yes (Nextflow) | Scripts | Manual | Scripts |
-| Offline sharing | Yes (HTML) | No | Limited | No |
-| Container support | Yes | No | No | Limited |
 
 ---
 
@@ -114,9 +88,6 @@ conda activate karyoexplorer
 
 # 3. Test installation
 nextflow run main.nf --help
-
-# 4. Run pipeline (Nextflow automatically manages all other dependencies)
-nextflow run main.nf -params-file my_project.yaml -profile conda
 ```
 
 For detailed installation instructions, environment setup, and cluster configuration, see **[How_to_run.md](docs/How_to_run.md)**
@@ -125,7 +96,9 @@ For detailed installation instructions, environment setup, and cluster configura
 
 ## Quick Start
 
-A detailed guide for testing the pipeline with the demo dataset is provided: **[Illumina Demo Dataset Guide (PDF)](docs/illumina_demo_dataset_guide.pdf)**. You can test go through the guide and prepare and preprocess your own Illumina Infinnium Array output data in similar way. 
+A detailed guide for testing the pipeline with the demo dataset is provided: **[Illumina Demo Dataset Guide (PDF)](docs/illumina_demo_dataset_guide.pdf)**.
+
+You can test go through the guide and prepare and preprocess your own Illumina Infinnium Array output data in similar way. 
 
 ### Complete File Checklist
 
@@ -134,9 +107,9 @@ To be able to run the pipeline, you need to have following data. Before configur
 | Category | File Type | File Name/Description | Status |
 |----------|-----------|----------------------|--------|
 | **Genome Studio** | | | |
-| | Full Data Table | `Full_Data_Table.txt` | ☐ |
-| | Samples Table | `Samples_Table.txt` | ☐ |
-| | SNP Table | `SNP_Table.txt` | ☐ |
+| | Full Data Table | `Full Data Table.txt` | ☐ |
+| | Samples Table | `Samples Table.txt` | ☐ |
+| | SNP Table | `SNP Table.txt` | ☐ |
 | **PLINK Files** | | | |
 | | PLINK Folder | `PLINK_[timestamp]/` directory | ☐ |
 | | PED File | `*.ped` (inside PLINK folder) | ☐ |
@@ -179,7 +152,7 @@ gunzip Homo_sapiens.GRCh37.dna.primary_assembly.fa.gz
 - **Single Analysis**: Identifies absolute copy number variants in individual samples based on expected base copy number. For further details, please see bcftools cnv detection algorithm. 
 
 
-Create a sample pairing file that defines the analysis strategy for your samples. This file specifies which samples should be analyzed individually (single analysis) and which should be compared against reference samples (paired analysis).
+Create a sample pairing file based on your sample names on your data that defines the analysis strategy for your samples. This file specifies which samples should be analyzed individually (single analysis) and which should be compared against reference samples (paired analysis).
 
 **Sample pairing file format** (`sample_sheet.xls`):
 
@@ -211,8 +184,8 @@ cp templates/params.yaml my_project.yaml
 **Edit key parameters:**
 ```yaml
 # Reference Genome (choose GRCh37 or GRCh38)
-PAR: '/path/to/PAR_Coord_GRCh38.txt'
-# PAR: '/path/to/PAR_Coord_GRCh37.txt'    # Alternative for GRCh37
+PAR: './datasets/PAR/PAR_Coord_GRCh38.txt'
+# PAR: './datasets/PAR/PAR_Coord_GRCh37.txt'    # Alternative for GRCh37
 
 fasta: '/path/to/Homo_sapiens.GRCh38.dna.primary_assembly.fa'
 # fasta: '/path/to/Homo_sapiens.GRCh37.dna.primary_assembly.fa'  # Alternative for GRCh37
@@ -221,7 +194,7 @@ fasta: '/path/to/Homo_sapiens.GRCh38.dna.primary_assembly.fa'
 project_ID: 'YOUR_PROJECT_ID'
 responsible_person: 'Name_of_the_requester'
 
-# Sample Pairing File (generated by preprocessing/preprocessing_run.sh)
+# Sample Pairing File
 samples_refs: '/path/to/sample_sheet.xls'
 
 # GenomeStudio Exports
@@ -248,22 +221,17 @@ name_analyst: 'Your Name'                 # Optional
 nextflow run main.nf -params-file my_project.yaml -profile conda
 ```
 
+#### Docker
+```bash
+nextflow run main.nf -params-file my_project.yaml -profile docker
+```
+
 #### HPC Cluster (SLURM)
 ```bash
 # Copy and edit SLURM template
 cp templates/submit.sbatch my_project.sbatch
 # Edit paths and resources in my_project.sbatch
 sbatch my_project.sbatch
-```
-
-#### Docker
-```bash
-nextflow run main.nf -params-file my_project.yaml -profile docker
-```
-
-#### Singularity
-```bash
-nextflow run main.nf -params-file my_project.yaml -profile singularity
 ```
 
 ---
@@ -304,13 +272,6 @@ results/
 
 Open `results/5.1_KaryoExplorer_single/KaryoExplorer.html` or `results/5.2_KaryoExplorer_paired/KaryoExplorer.html` in a modern web browser (Chrome/Firefox recommended).
 
-**Features:**
-- Navigate between samples and chromosomes
-- Zoom and pan on BAF/LRR/CN plots
-- Highlight and inspect CNV/LoH regions
-- Export tables and figures
-- Print to PDF preserving current view
-
 **Important:** Keep the HTML file in its directory alongside `samples/` and `components/` folders for proper functionality.
 
 ---
@@ -346,7 +307,7 @@ ls -lh datasets/demo/*.csv
 
 The `datasets/demo/` directory includes:
 - Illumina GSA v4.0 array manifest files (.bpm, .egt, .csv)
-- Sample sheets and annotation files
+- Example sample_sheet.xls and params.yaml file to run the pipeline
 - PLINK format data files (.ped, .map)
 - Full data tables and SNP information
 
@@ -355,15 +316,24 @@ The `datasets/demo/` directory includes:
 **Quick Start with Demo Data:**
 
 ```bash
+
+#Optional based on your setup - Activate Conda Environment
+
+# conda activate karyoexplorer
+
 # 1. Download the demo dataset (if not already done)
 git lfs pull --include="datasets/demo/**"
 
-# 2. Process in GenomeStudio (see PDF guide for details)
+# 2. Copy provided templates and sample sheet provided from datasets directory  to main directory
 
-# 3. Organize your processed data according to pipeline requirements
+cp datasets/demo/sample_sheet.xls ./
+cp datasets/demo/params.yaml
+
+# 3. Organize the paths on the params.yaml file for the demo dataset. Using abosulate path recommended
 
 # 4. Run pipeline with demo parameters
-nextflow run main.nf -params-file templates/demo_params.yaml -profile conda
+nextflow run main.nf -params-file templates/demo_params.yaml -profile docker
+# or nextflow run main.nf -params-file templates/demo_params.yaml -profile conda
 ```
 
 **The demo dataset allows you to:**

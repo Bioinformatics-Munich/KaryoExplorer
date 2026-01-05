@@ -1,6 +1,6 @@
 # How to Run the Digital Karyotyping Pipeline
 
-This comprehensive guide provides step-by-step instructions for setting up and running the Digital Karyotyping pipeline on computing clusters.
+This guide provides step-by-step instructions for setting up and running the Digital Karyotyping pipeline on computing clusters.
 
 ## Prerequisites
 
