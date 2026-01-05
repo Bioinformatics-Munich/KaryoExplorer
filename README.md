@@ -340,7 +340,7 @@ Open `results/5.1_KaryoExplorer_single/KaryoExplorer.html` or `results/5.2_Karyo
 
 ---
 
-## Illumina Demo Dataset
+## Testing and Validation
 
 KaryoExplorer includes a pre-processed demo dataset from Illumina's Global Screening Array v4.0, stored using Git LFS.
 
@@ -431,20 +431,6 @@ nextflow run main.nf -params-file templates/demo_params.yaml -profile docker
 **Assuming -resume for cached preprocessing steps; first run may take longer for VCF preprocessing (around + 20 mins, rest of the steps are parallelized)
 
 ***Peak memory per parallel task; total cluster allocation depends on concurrent tasks
-
----
-
-## Testing and Validation
-
-### Demo Dataset Validation
-
-The included demo dataset provides expected outputs for validation:
-- Known CNV regions from Illumina reference samples
-- QC metrics benchmarks
-- Interactive visualization functionality
-
-You can validate the installation by comparing demo results with expected outputs.
-
 ---
 
 ## Documentation
@@ -463,8 +449,6 @@ Comprehensive documentation is available in the `docs/` directory:
   - QC metrics interpretation
   - CNV/LoH result tables
   - Interactive visualization guide
-  
-- **[Changelog.md](docs/Changelog.md)**: Version history and updates
 
 - **[Illumina Demo Dataset Guide](docs/illumina_demo_dataset_guide.pdf)**: Step-by-step tutorial
 
