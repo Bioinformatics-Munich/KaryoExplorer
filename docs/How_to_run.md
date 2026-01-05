@@ -4,11 +4,48 @@ This guide provides step-by-step instructions for setting up and running the Dig
 
 ## Prerequisites
 
-- **Nextflow** (version 24.10.4 or later)
-- **Conda** or **Singularity** for environment management
-- **Java** (version 11 or later)
-- **Computing cluster access** (required for optimal performance)
+### System Requirements
 
+ Minimum: 4 CPU cores, 16 GB RAM, 50 GB storage
+
+#### Software Dependencies
+- **Nextflow** ≥ 24.10.0 ([installation guide](https://www.nextflow.io/docs/latest/getstarted.html))
+- **Java** ≥ 11 (required by Nextflow)
+- **Container/Environment Manager** (choose one):
+  - Docker ≥ 20.10 (recommended for local execution)
+  - Conda/Mamba (for HPC clusters)
+  - Apptainer (for HPC clusters)
+
+### Supported Platforms
+
+
+- **HPC Clusters** - SLURM configuration included 
+
+- **Linux** (x86_64) 
+
+- **Windows** (x86_64)
+
+- **macOS** (Apple Silicon) - Supported via Docker with x86_64 emulation   
+
+> **Note for Apple Silicon Users (M1/M2/M3):**  
+> The pipeline uses Docker with `linux/amd64` platform emulation for compatibility with bioinformatics tools. Nextflow Wave automatically builds and caches containers. Successfully tested with demo dataset on MacBook Pro M1 with 16GB RAM using the `docker` profile.
+
+
+### Quick Setup
+
+**Conda Environment Setup**
+```bash
+# 1. Clone the repository
+git clone https://github.com/Bioinformatics-Munich/KaryoExplorer.git
+cd KaryoExplorer
+
+# 2. Create environment with Nextflow and Java
+conda env create -f env/karyoexplorer.yaml
+conda activate karyoexplorer
+
+# 3. Test installation
+nextflow run main.nf --help
+```
 ## Data Preparation
 
 ### 1. GenomeStudio Export
@@ -102,13 +139,13 @@ Edit `submit.sbatch` to match your cluster configuration:
 
 ```bash
 #!/bin/bash
-#SBATCH -o Karyoplayground.log
-#SBATCH -e Karyoplayground.err
-#SBATCH --job-name=Karyoplayground
-#SBATCH --mem=8G                    
+#SBATCH -o KaryoExplorer.log
+#SBATCH -e KaryoExplorer.err
+#SBATCH --job-name=KaryoExplorer
+#SBATCH --mem=16G                    
 #SBATCH -t 06:00:00                 
-#SBATCH --partition=cpu_p
-#SBATCH --qos=cpu_normal
+#SBATCH --partition=<partition_name>
+#SBATCH --qos=<qos_namel>
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 ```
@@ -120,7 +157,6 @@ sbatch submit.sbatch
 ```
 
 **Key Features of SLURM Execution:**
-- **Automatic project ID detection** from directory structure
 - **Optimized scratch directory management** (`/lustre/scratch/users/${USER}/${PROJECT_ID}`)
 - **Conda environment caching** for faster subsequent runs
 - **Logging** with SLURM separate stdout/stderr files
@@ -137,12 +173,11 @@ export NXF_CONDA_CACHEDIR=/path/to/conda/cache
 nextflow run main.nf \
     -params-file params.yaml \
     --outdir results \
-    -profile normal \
-    -with-conda \
+    -profile docker \
     -resume
 ```
 
-**Note**: Local execution is not recommended for production runs due to resource limitations.
+
 
 ## Environment Variables
 
@@ -164,7 +199,7 @@ Key environment variables (automatically set in SLURM template):
 squeue -u $USER
 
 # View real-time logs
-tail -f Karyoplayground.log
+tail -f KaryoExplorer.log
 tail -f .nextflow.log
 
 # Check pipeline status
@@ -253,7 +288,7 @@ my_project_ID/                                 # Main project directory (e.g., P
     ├── 3.0_sample_annotation/                 # Sample annotations
     ├── 4.0_roh_loh_analysis/                  # ROH/LOH analysis results
     ├── 5.0_<app_name>_preprocessing/          # Visualization data preparation (app_name: configurable)
-    ├── 5.1_<app_name>_unpaired/               # Interactive unpaired sample results
+    ├── 5.1_<app_name>_single/               # Interactive single sample results
     └── 5.2_<app_name>_paired/                 # Interactive paired sample results
 ```
 
@@ -280,7 +315,7 @@ results/
 ├── README.html                              # This documentation file
 ├── 0.0_information/                         # Pipeline metadata and logs
 │   ├── 0.1_pipeline_logs/                   # Process-specific log files
-│   │   ├── 5.1_<app_name>_unpaired_logs/    # Unpaired analysis logs
+│   │   ├── 5.1_<app_name>_single_logs/    # single analysis logs
 │   │   └── 5.2_<app_name>_paired_logs/      # Paired analysis logs
 │   ├── 0.2_versions/                        # Software version information
 │   │   ├── bcftools.version.txt
@@ -304,7 +339,7 @@ results/
 │   ├── 4.1_roh_loh_single/                  # Single sample ROH/LOH analysis
 │   └── 4.2_roh_loh_paired/                  # Paired sample ROH/LOH analysis
 ├── 5.0_<app_name>_preprocessing/            # Data preparation for visualization (configurable)
-├── 5.1_<app_name>_unpaired/                 # Interactive unpaired sample results (configurable)
+├── 5.1_<app_name>_single/                 # Interactive single sample results (configurable)
 └── 5.2_<app_name>_paired/                   # Interactive paired sample results (configurable)
 ```
 
@@ -321,15 +356,15 @@ Customize the application name and output folder structure by editing `nextflow.
 
 ```groovy
 params {
-  app_name = 'KaryoPlayground'  // Default: 'KaryoPlayground'
+  app_name = 'KaryoExplorer'  // Default: 'KaryoExplorer'
 }
 ```
 
 **Impact:**
-- The application name appears in the **HTML page title** (e.g., `KaryoPlayground.html`)
+- The application name appears in the **HTML page title** (e.g., `KaryoExplorer.html`)
 - **Output folder names** are dynamically generated:
   - `5.0_<app_name>_preprocessing/`
-  - `5.1_<app_name>_unpaired/`
+  - `5.1_<app_name>_single/`
   - `5.2_<app_name>_paired/`
 - Application name is displayed in the **footer** of all HTML pages
 
@@ -337,7 +372,7 @@ params {
 ```groovy
 app_name = 'MyCustomAnalyzer'
 ```
-This generates folders: `5.0_MyCustomAnalyzer_preprocessing/`, `5.1_MyCustomAnalyzer_unpaired/`, etc.
+This generates folders: `5.0_MyCustomAnalyzer_preprocessing/`, `5.1_MyCustomAnalyzer_single/`, etc.
 
 ### Contact Information Customization
 
@@ -400,9 +435,6 @@ Customize the documentation provided to end users in their results folder:
 - Include institutional branding and contact information  
 - Add custom analysis guidelines or interpretation notes
 - Maintain consistent documentation across projects 
-
-
-
 
 
 For detailed output descriptions, see [Outputs.md](Outputs.md).

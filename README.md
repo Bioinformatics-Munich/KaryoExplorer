@@ -17,7 +17,7 @@ This digital karyotyping pipeline detects de novo copy number abnormalities aris
 
 
 **KaryoExplorer** standardizes this workflow into a single, reproducible pipeline that:
-- Performs CNV and LoH analysis from Illumina Infinnium genotyping array data
+- Performs CNV and LoH analysis from Illumina Infinium genotyping array data
 - Detects copy-neutral LoH (cnLoH) by overlaying runs of homozygosity with copy number states
 - Generates self-contained, interactive HTML reports with synchronized BAF/LRR/CN visualizations
 - Enables offline browsing with no additional software requirements
@@ -30,6 +30,34 @@ This digital karyotyping pipeline detects de novo copy number abnormalities aris
   <em>Figure 1: Self-contained interactive report displaying navigation menu, QC summary metrics, and sample overview for paired analysis (left). Interactive demonstration of the illumina data results, dropdown features and navigation. Source: Illumina 2024 Infinium Global Screening Array v4.0 Used under license from Illumina, Inc. All Rights Reserved (right).</em>
 </div>
 
+
+---
+
+## Statement of Need
+
+Digital karyotyping of iPSC lines is widely practiced, but current workflows suffer from fragmentation. Labs typically:
+- Use separate tools for CNV and ROH/LoH analysis
+- Manually combine tables, screenshots, and scripts
+- Struggle with result sharing and reproducibility
+- Lack integrated visualization of BAF, LRR, and copy number states
+
+**KaryoExplorer addresses these challenges by:**
+1. **Standardizing analysis**: Single pipeline from raw data to publication-ready results
+2. **Integrating interpretation**: Unified visualization of CNV, LoH, and cnLoH in context
+3. **Enabling collaboration**: Self-contained HTML reports sharable via email or web
+4. **Ensuring reproducibility**: Containerized workflow with complete provenance tracking
+
+### Comparison with Existing Tools
+
+| Feature | KaryoExplorer | PennCNV/QuantiSNP | GenomeStudio | ASCAT |
+|---------|----------------|-------------------|--------------|--------|
+| Open source | Yes | Yes | No | Yes |
+| Paired analysis | Yes | Limited | Limited | Yes (cancer-focused) |
+| cnLoH detection | Integrated | Manual | Manual | Yes |
+| Interactive visualization | Yes | No | GUI only | No |
+| Reproducible workflow | Yes (Nextflow) | Scripts | Manual | Scripts |
+| Offline sharing | Yes (HTML) | No | Limited | No |
+| Container support | Yes | No | No | Limited |
 
 ---
 
@@ -60,6 +88,22 @@ This digital karyotyping pipeline detects de novo copy number abnormalities aris
 - **Workflow management**: Nextflow DSL2 with automatic provenance tracking
 - **HPC-ready**: SLURM configuration and templates with optimized resource allocation
 - **Version control**: Automatic software version and parameter logging
+
+
+## Research Applications
+
+KaryoExplorer has been designed for:
+- Quality control of iPSC lines in stem cell research
+- Detection of chromosomal instability in cell culture
+- Comparative genomic analysis of donor-derived cell lines
+- Large-scale genomic screening in biobanking facilities
+
+The pipeline is particularly suited for laboratories that:
+- Generate iPSC lines requiring genomic quality control
+- Perform longitudinal monitoring of cell line stability
+- Need reproducible CNV/LoH analysis workflows
+- Require interactive visualization for data exploration
+
 
 
 ---
@@ -116,11 +160,13 @@ For detailed installation instructions, environment setup, and cluster configura
 
 A detailed guide for testing the pipeline with the demo dataset is provided: **[Illumina Demo Dataset Guide (PDF)](docs/illumina_demo_dataset_guide.pdf)**.
 
-You can test go through the guide and prepare and preprocess your own Illumina Infinnium Array output data in similar way. 
+You can go through the guide and prepare and preprocess your own Illumina Infinium Array output data in similar way. 
 
 ### Complete File Checklist
 
 To be able to run the pipeline, you need to have following data. Before configuring the pipeline, verify you have all required files:
+
+> **Note**: Check off items as you collect them to ensure all required files are available before running the pipeline.
 
 | Category | File Type | File Name/Description | Status |
 |----------|-----------|----------------------|--------|
@@ -388,6 +434,19 @@ nextflow run main.nf -params-file templates/demo_params.yaml -profile docker
 
 ---
 
+## Testing and Validation
+
+### Demo Dataset Validation
+
+The included demo dataset provides expected outputs for validation:
+- Known CNV regions from Illumina reference samples
+- QC metrics benchmarks
+- Interactive visualization functionality
+
+You can validate the installation by comparing demo results with expected outputs.
+
+---
+
 ## Documentation
 
 Comprehensive documentation is available in the `docs/` directory:
@@ -467,6 +526,23 @@ Describe:
 2. Proposed solution
 3. Expected behavior
 4. Alternative approaches considered
+
+### Contributing
+
+We welcome contributions! Please:
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+For major changes, please open an issue first to discuss what you would like to change.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed contribution guidelines.
+
+### Code of Conduct
+
+We are committed to providing a welcoming and inclusive environment. All contributors are expected to adhere to our [Code of Conduct](CODE_OF_CONDUCT.md)
 
 ---
 
@@ -550,7 +626,11 @@ This software is provided "as is" without warranty of any kind. While thoroughly
 ## Quick Links
 
 - [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Statement of Need](#statement-of-need)
 - [Example Dataset](datasets/demo)
 - [Documentation](docs/)
+- [Contributing](CONTRIBUTING.md)
+- [Code of Conduct](CODE_OF_CONDUCT.md)
 - [Issue Tracker](https://github.com/Bioinformatics-Munich/KaryoExplorer/issues)
 - [License](LICENSE)

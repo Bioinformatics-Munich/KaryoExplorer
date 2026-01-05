@@ -15,8 +15,6 @@ set -eo pipefail
 # for info
 echo "Script started at $(date)"
 echo "Submitted from directory: $(pwd)"
-PROJECT_ID=$(pwd | grep -oP "P2[4-9]000/\K[^/]+")
-printf "PROJECT_ID: $PROJECT_ID\n"
 
 ####################################################################################
 
