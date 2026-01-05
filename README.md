@@ -79,12 +79,13 @@ This digital karyotyping pipeline detects de novo copy number abnormalities aris
 
 ### Supported Platforms
 
-**Linux** (x86_64) 
+- **HPC Clusters** - SLURM configuration included 
 
-**Windows** (x86_64)
+- **Linux** (x86_64) 
 
-**macOS** (Intel & Apple Silicon) - Supported via Docker with x86_64 emulation  
-**HPC Clusters** - SLURM configuration included  
+- **Windows** (x86_64)
+
+- **macOS** (Apple Silicon) - Supported via Docker with x86_64 emulation   
 
 > **Note for Apple Silicon Users (M1/M2/M3):**  
 > The pipeline uses Docker with `linux/amd64` platform emulation for compatibility with bioinformatics tools. Nextflow Wave automatically builds and caches containers. Successfully tested with demo dataset on MacBook Pro M1 with 16GB RAM using the `docker` profile.
