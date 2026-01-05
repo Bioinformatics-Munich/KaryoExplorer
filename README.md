@@ -66,13 +66,28 @@ This digital karyotyping pipeline detects de novo copy number abnormalities aris
 
 ## Installation
 
-**System Requirements:**
+### System Requirements
 
-- **Nextflow** ≥ 24.10.0 ([install guide](https://www.nextflow.io/docs/latest/getstarted.html))
-- Java ≥ 11
-- Conda, Docker, or Singularity
+#### Software Dependencies
+- **Nextflow** ≥ 24.10.0 ([installation guide](https://www.nextflow.io/docs/latest/getstarted.html))
+- **Java** ≥ 11 (required by Nextflow)
+- **Container/Environment Manager** (choose one):
+  - Docker ≥ 20.10 (recommended for local development)
+  - Conda/Mamba (for HPC clusters)
+  - Singularity (for HPC clusters)
 - Minimum: 4 CPU cores, 16 GB RAM, 50 GB storage
-- Recommended: HPC cluster for large datasets
+
+### Supported Platforms
+
+**Linux** (x86_64) 
+
+**Windows** (x86_64)
+
+**macOS** (Intel & Apple Silicon) - Supported via Docker with x86_64 emulation  
+**HPC Clusters** - SLURM configuration included  
+
+> **Note for Apple Silicon Users (M1/M2/M3):**  
+> The pipeline uses Docker with `linux/amd64` platform emulation for compatibility with bioinformatics tools. Nextflow Wave automatically builds and caches containers. Successfully tested with demo dataset on MacBook Pro M1 with 16GB RAM using the `docker` profile.
 
 ### Quick Setup
 
@@ -127,7 +142,7 @@ To be able to run the pipeline, you need to have following data. Before configur
 
 If you don't have the reference genome files, you can download them from Ensembl:
 
-**GRCh38 (recommended):**
+**GRCh38:**
 ```bash
 # Download GRCh38
 wget https://ftp.ensembl.org/pub/release-110/fasta/homo_sapiens/dna/Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz
@@ -136,7 +151,7 @@ wget https://ftp.ensembl.org/pub/release-110/fasta/homo_sapiens/dna/Homo_sapiens
 gunzip Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz
 ```
 
-**GRCh37 (legacy):**
+**GRCh37:**
 ```bash
 # Download GRCh37
 wget https://ftp.ensembl.org/pub/grch37/release-110/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.dna.primary_assembly.fa.gz
@@ -185,10 +200,10 @@ cp templates/params.yaml my_project.yaml
 ```yaml
 # Reference Genome (choose GRCh37 or GRCh38)
 PAR: './datasets/PAR/PAR_Coord_GRCh38.txt'
-# PAR: './datasets/PAR/PAR_Coord_GRCh37.txt'    # Alternative for GRCh37
+# PAR: './datasets/PAR/PAR_Coord_GRCh37.txt'    # Alternative for GRCh38
 
-fasta: '/path/to/Homo_sapiens.GRCh38.dna.primary_assembly.fa'
-# fasta: '/path/to/Homo_sapiens.GRCh37.dna.primary_assembly.fa'  # Alternative for GRCh37
+fasta: '/path/to/Homo_sapiens.GRCh38.dna.primary_assembly.fa' # Reference Genome
+# fasta: '/path/to/Homo_sapiens.GRCh37.dna.primary_assembly.fa'  # Alternative for GRCh38
 
 # Project Information
 project_ID: 'YOUR_PROJECT_ID'
@@ -221,7 +236,7 @@ name_analyst: 'Your Name'                 # Optional
 nextflow run main.nf -params-file my_project.yaml -profile conda
 ```
 
-#### Docker
+#### Local Execution (Docker)
 ```bash
 nextflow run main.nf -params-file my_project.yaml -profile docker
 ```
@@ -313,6 +328,8 @@ The `datasets/demo/` directory includes:
 
 ### Using the Demo Dataset
 
+
+
 **Quick Start with Demo Data:**
 
 ```bash
@@ -329,7 +346,7 @@ git lfs pull --include="datasets/demo/**"
 cp datasets/demo/sample_sheet.xls ./
 cp datasets/demo/params.yaml
 
-# 3. Organize the paths on the params.yaml file for the demo dataset. Using abosulate path recommended
+# 3. Organize the paths on the params.yaml file for the demo dataset. Using absolute paths are recommended
 
 # 4. Run pipeline with demo parameters
 nextflow run main.nf -params-file templates/demo_params.yaml -profile docker
@@ -397,7 +414,7 @@ If you use KaryoExplorer in your research, please cite:
 
 ```bibtex
 @article{KaryoExplorer2025,
-  title={KaryoExplorer: Interactive Pipeline for Digital Karyotyping with CNV and LoH Detection},
+  title={KaryoExplorer: An Automated Digital Karyotyping Pipeline with Interactive Visualizations},
   author={Dura, Ugur and Pastor, Xavier and Walzthoeni, Thomas and Boos, Alena},
   journal={Journal of Open Source Software},
   year={2025},
@@ -422,55 +439,15 @@ If you use KaryoExplorer in your research, please cite:
 }
 ```
 
-**Workflow Management:**
-```bibtex
-@article{ditommaso2017nextflow,
-  title={Nextflow enables reproducible computational workflows},
-  author={Di Tommaso, Paolo and others},
-  journal={Nature Biotechnology},
-  volume={35},
-  number={4},
-  pages={316--319},
-  year={2017},
-  doi={10.1038/nbt.3820}
-}
-```
-
 ---
 
-## Contributing
-
-We welcome contributions! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) for:
-- Bug reporting guidelines
-- Feature request process
-- Code contribution workflow
-- Development setup
-- Testing procedures
-
-### Quick Start for Contributors
-
-```bash
-# Clone and create development branch
-git clone https://github.com/yourusername/pipeline_digital_karyotyping.git
-cd pipeline_digital_karyotyping
-git checkout -b feature/your-feature-name
-
-# Run tests
-nextflow run tests/test_pipeline.nf -profile test
-
-# Submit pull request
-git push origin feature/your-feature-name
-```
-
----
 
 ## Community & Support
 
 ### Getting Help
 
-- **Issues**: Report bugs or request features via [GitHub Issues](https://github.com/yourusername/pipeline_digital_karyotyping/issues)
-- **Discussions**: Ask questions in [GitHub Discussions](https://github.com/yourusername/pipeline_digital_karyotyping/discussions)
-- **Email**: For private inquiries, contact bioinformatics-core@helmholtz-munich.de
+- **Issues**: Report bugs or request features via [GitHub Issues](https://github.com/Bioinformatics-Munich/KaryoExplorer/issues)
+- **Email**: For private inquiries, contact cf-bios@helmholtz-munich.de
 
 ### Reporting Bugs
 
@@ -502,34 +479,10 @@ Describe:
 
 **Original Algorithm Development:**
 - **Dr. Lucia Trastulla** - CNV Detection Algorithm (Max Planck Institute for Psychiatry)
-- **Dr. Laura Jiménez Barrón** - Initial Pipeline Development (Max Planck Institute for Psychiatry)
+- **Dr. Laura Jiménez Barrón** - CNV Detection Algorithm (Max Planck Institute for Psychiatry)
 - **Prof. Dr. Michael Ziller** - Scientific Supervision (Max Planck Institute for Psychiatry)
 - **Prof. Dr. Elisabeth Binder** - Scientific Supervision (Max Planck Institute for Psychiatry)
-
-### Institutional Support
-
-- **Helmholtz Zentrum München** - Core Facility Bioinformatics and Statistics
-- **Max Planck Institute for Psychiatry** - Original algorithm development
-
 ---
-
-## Technical Details
-
-### Software Dependencies
-
-**Core Tools:**
-- Nextflow ≥ 24.10.0 - Workflow management
-- bcftools ≥ 1.15 - CNV calling (bcftools cnv, bcftools roh)
-- PLINK v1.90 - Genotype data manipulation
-- VCFtools ≥ 0.1.16 - VCF processing
-
-**Programming Languages:**
-- R ≥ 4.0.0 - Statistical computing
-- Python ≥ 3.8 - Data processing
-- Bokeh ≥ 3.0 - Interactive visualization
-
-**Documentation:**
-- Pandoc ≥ 2.19 - Report generation
 
 ### Environment Management
 
@@ -545,20 +498,6 @@ Describe:
 - No manual intervention required
 
 Full dependency specifications with exact versions are available in the `env/` directory. 
-
-### Computational Requirements
-
-**Minimum Configuration:**
-- 4 CPU cores
-- 16 GB RAM
-- 50 GB storage
-
-### Container Images
-
---> Pre-built containers can be included ???
-
-- **Docker Hub**: `username/KaryoExplorer:latest`
-
 ---
 
 ## License
@@ -570,6 +509,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 - **CNV detection**: Adapted from bcftools/RoH (MIT/Expat License)
 - **Original pipeline**: Based on MPIP CNV Detection (GPL-3.0)
 - **Interactive plots**: Bokeh (BSD 3-Clause License)
+- **Test Dataset**:Source: Illumina 2024 Infinium Global Screening Array v4.0 Used under license from Illumina, Inc. All Rights Reserved.
 
 ---
 
@@ -599,19 +539,15 @@ This software is provided "as is" without warranty of any kind. While thoroughly
 
 - **Version**: 1.0
 - **Status**: Active Development
-- **Last Updated**: 2025
-- **Repository**: https://github.com/yourusername/pipeline_digital_karyotyping
-- **Documentation**: https://pipeline-digital-karyotyping.readthedocs.io/
+- **Last Updated**: 2026
+- **Repository**: https://github.com/Bioinformatics-Munich/KaryoExplorer
 
 ---
 
 ## Quick Links
 
 - [Installation](#installation)
-- [Usage Guide](#usage)
-- [Example Dataset](#example-dataset)
+- [Example Dataset](datasets/demo)
 - [Documentation](docs/)
-- [Issue Tracker](https://github.com/yourusername/pipeline_digital_karyotyping/issues)
-- [Release Notes](docs/Changelog.md)
-- [Contributing](CONTRIBUTING.md)
+- [Issue Tracker](https://github.com/Bioinformatics-Munich/KaryoExplorer/issues)
 - [License](LICENSE)

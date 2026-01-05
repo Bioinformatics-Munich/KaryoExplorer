@@ -39,68 +39,6 @@ same sample name as reference)
 - **Paired Mode**: Compare post-treatment sample with pre-treatment reference
 - **Single Mode**: Analyze sample independently (use "None" or same sample name in Reference column)
 
-#### Using Preprocessing Tools
-
-The preprocessing tools automate sample pairing file generation and validate sample names across all input files.
-
-**Step 1: Configure Preprocessing Settings**
-
-Before running the preprocessing script, configure the `preprocessing/preprocessing_config.yaml` file with your project-specific paths.
- 
-**Configuration Parameters:**
-
-- **`input_excel`**: Path to your Excel file containing sample information and pairing definitions (this serves as the source of truth for sample relationships)
-- **`output_file`**: Name of the generated sample pairing file (recommended name is `sample_sheet.xls`)
-- **`full_data_table`**: Path to the GenomeStudio Full Data Table export
-- **`samples_table`**: Path to the GenomeStudio Samples Table export
-- **`corrected_output_dir`**: Directory where corrected versions of input files will be saved if sample name corrections are needed
-
-**Step 2: Generate Sample Pairing File**
-
-```bash
-cd pipeline_digital_karyotyping/preprocessing/
-./preprocessing_run.sh
-```
-
-This creates `sample_sheet.xls` in the pipeline directory and validates sample names across all input files.
-
-**Step 3: Sample Name Validation**
-
-The preprocessing script generates a validation report in the `preprocessing/` directory. Check the **STEP 2: SAMPLE NAME VALIDATION** section to ensure all sample names are consistent across input files.
-
-**Example Validation Report:**
-```
-Validation Results:
-- Excel samples (reference): 9
-- Samples Table: 9 samples
-- Full Data Table: 9 samples
-- Incorrect samples in Samples Table: 2
-- Incorrect samples in Full Data Table: 0
-- Total issues found: 2
-
-Correction Suggestions:
-- Generated 2 corrections in: sample_name_corrections_17_10_2025.csv
-- Review CSV file and edit as needed
-- Run script with CSV to apply corrections
-```
-
-**Step 4: Apply Corrections (if needed)**
-
-When there is a sample name mismatch occures, the script generates a correction CSV file with suggested fixes using fuzzy logic (High Low indicates the fuzzy logic prediction confidence):
-
-```csv
-incorrect_sample,correct_sample,file_source,confidence
-Insulin.Corrected,Insulin_Corrected,samples_table,HIGH
-Insulin.Mutant,Insulin_Mutant,samples_table,HIGH
-```
-
-You can adjust the csv file based on your corrections also. If corrections are acceptable, apply them by running:
-
-```bash
-./preprocessing_run.sh sample_name_corrections_17_10_2025.csv
-```
-
-This creates corrected versions of input files in the directory specified by `corrected_output_dir` in `preprocessing_config.yaml`. Update your `params.yaml` file to use these corrected files.
 
 ## Pipeline Setup
 
@@ -240,13 +178,6 @@ nextflow log
 sbatch submit.sbatch  # SLURM will automatically resume with -resume flag
 ```
 
-### Generate Detailed Reports
-
-The SLURM template automatically generates:
-- **Execution report**: `logs/nextflow/report.html`
-- **Trace file**: `logs/nextflow/trace.txt`
-- **Timeline**: `logs/nextflow/timeline.html`
-
 ## Common Issues and Solutions
 
 ### 1. Sample Name Validation
@@ -257,11 +188,7 @@ The SLURM template automatically generates:
 - **Issue**: Relative paths causing file not found errors
 - **Solution**: Use absolute paths in `params.yaml`
 
-### 3. Memory Issues
-- **Issue**: Out of memory errors for large datasets
-- **Solution**: Increase memory allocation in `submit.sbatch` (`#SBATCH --mem=16G`)
-
-### 4. Conda Environment Issues
+### 3. Conda Environment Issues
 - **Issue**: Conda cache directory full or inaccessible
 - **Solution**: Ensure sufficient space in `NXF_CONDA_CACHEDIR` or you have correct ACL permissions to the directory. 
 
@@ -341,7 +268,7 @@ my_project_ID/                                 # Main project directory (e.g., P
 
 **Configuration Files:**
 - **params.yaml**: Project-specific parameter file with all input/output paths
-- **submit.sbatch**: SLURM submission script customized for your cluster environment
+- **submit.sbatch**: SLURM submission script customized for the HPC cluster environment
  
 
 ## Output Directory Structure
