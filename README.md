@@ -68,16 +68,18 @@ This digital karyotyping pipeline detects de novo copy number abnormalities aris
 
 ### System Requirements
 
+ Minimum: 4 CPU cores, 16 GB RAM, 50 GB storage
+
 #### Software Dependencies
 - **Nextflow** ≥ 24.10.0 ([installation guide](https://www.nextflow.io/docs/latest/getstarted.html))
 - **Java** ≥ 11 (required by Nextflow)
 - **Container/Environment Manager** (choose one):
-  - Docker ≥ 20.10 (recommended for local development)
+  - Docker ≥ 20.10 (recommended for local execution)
   - Conda/Mamba (for HPC clusters)
-  - Singularity (for HPC clusters)
-- Minimum: 4 CPU cores, 16 GB RAM, 50 GB storage
+  - Apptainer (for HPC clusters)
 
 ### Supported Platforms
+
 
 - **HPC Clusters** - SLURM configuration included 
 
