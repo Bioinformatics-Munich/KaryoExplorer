@@ -96,7 +96,7 @@ KaryoExplorer has been designed for:
 - Quality control of iPSC lines in stem cell research
 - Detection of chromosomal instability in cell culture
 - Comparative genomic analysis of donor-derived cell lines
-- Large-scale genomic screening in biobanking facilities
+- Large-scale genomic screening in biobank facilities
 
 The pipeline is particularly suited for laboratories that:
 - Generate iPSC lines requiring genomic quality control
@@ -209,7 +209,7 @@ wget https://ftp.ensembl.org/pub/grch37/release-110/fasta/homo_sapiens/dna/Homo_
 gunzip Homo_sapiens.GRCh37.dna.primary_assembly.fa.gz
 ```
 
-### Sample Sheet Preperation
+### Sample Sheet Preperation 
 
 **Analysis Types:**
 - **Paired Analysis**: Detects differential copy number changes between sample and reference (e.g., somatic variants in clones vs donor)

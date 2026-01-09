@@ -145,7 +145,7 @@ Edit `submit.sbatch` to match your cluster configuration:
 #SBATCH --mem=16G                    
 #SBATCH -t 06:00:00                 
 #SBATCH --partition=<partition_name>
-#SBATCH --qos=<qos_namel>
+#SBATCH --qos=<qos_name>
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 ```
