@@ -64,18 +64,26 @@ The pipeline supports two analysis modes defined in a sample pairing file:
 #### Sample Reference Table Format
 
 ```tsv
-Sample	Reference
-FOK0001	FOK0001BE00M32    # Paired mode: compare sample vs reference
-FOK0002	FOK0002BE00M32    # Paired mode
-FOK0067 None              # Single mode: analyze FOK0067 standalone (Option with None)
-FOK0084 FOK0084           # Single mode: same sample name as reference (Option with including 
-same sample name as reference)
+Sample          Reference
+iPSC_clone1     Donor_material1    # Paired: compare iPSC_clone1 vs Donor_material1
+iPSC_clone2     Donor_material2    # Paired: compare iPSC_clone2 vs Donor_material2
+iPSC_clone1     iPSC_clone1        # Single: analyze iPSC_clone1 independently
+iPSC_clone2     iPSC_clone2        # Single: analyze iPSC_clone2 independently
+Donor_material1 Donor_material1    # Single: analyze Donor_material1 independently
+Donor_material2 Donor_material2    # Single: analyze Donor_material2 independently
 ```
 
-**Analysis Modes:**
-- **Paired Mode**: Compare post-treatment sample with pre-treatment reference
-- **Single Mode**: Analyze sample independently (use "None" or same sample name in Reference column)
 
+**Analysis Types:**
+- **Paired Analysis**: Detects differential copy number changes between sample and reference (e.g., somatic variants in clones vs donor)
+- **Single Analysis**: Identifies absolute copy number variants in individual samples based on expected base copy number. For further details, please see bcftools cnv detection algorithm. 
+
+**Important Requirements:**
+- **Tab-separated format**: Use tabs (not spaces) between Sample and Reference columns
+- **Header required**: First line must contain `Sample` and `Reference` column headers
+- **Paired analysis**: Sample name differs from Reference name (e.g., `iPSC_clone1` vs `Donor_material1`)
+- **Single analysis**: Sample name matches Reference name (e.g., `iPSC_clone1` vs `iPSC_clone1`)
+- **Complete coverage**: All samples used in paired analysis must also be included as single analysis entries
 
 ## Pipeline Setup
 
@@ -177,8 +185,6 @@ nextflow run main.nf \
     -resume
 ```
 
-
-
 ## Environment Variables
 
 Key environment variables (automatically set in SLURM template):
@@ -186,7 +192,7 @@ Key environment variables (automatically set in SLURM template):
 - **`NXF_VER`**: Nextflow version (e.g., "24.10.4")
 - **`NXF_CONDA_CACHEDIR`**: Directory for conda environments
 - **`NXF_WORK`**: Scratch directory for temporary files
-- **`NXF_SINGULARITY_CACHEDIR`**: Directory for Singularity images
+- **`NXF_SINGULARITY_CACHEDIR`**: Directory for Singularity/Apptainer images
 - **`TMPDIR`**: Temporary directory for processing
 
 
@@ -380,7 +386,7 @@ Add institutional and analyst contact information to the footer of all generated
 
 ```groovy
 params {
-  email_helmholtz = 'bioinformatics-core@helmholtz-munich.de'  // Institution email (required)
+  email_helmholtz = 'example@institution.de'  // Institution email (required)
   email_analyst   = ''  // Analyst email (optional)
   name_analyst    = ''  // Analyst name (optional)
 }
@@ -390,14 +396,14 @@ params {
 
 **With full analyst information:**
 ```groovy
-email_helmholtz = 'bioinformatics-core@helmholtz-munich.de'
+email_helmholtz = 'example@institution.de'
 email_analyst   = 'jane.smith@example.com'
 name_analyst    = 'Dr. Jane Smith'
 ```
 
 **With only institutional email:**
 ```groovy
-email_helmholtz = 'bioinformatics-core@helmholtz-munich.de'
+email_helmholtz = 'example@institution.de'
 email_analyst   = ''
 name_analyst    = ''
 ```
@@ -438,11 +444,3 @@ Customize the documentation provided to end users in their results folder:
 
 
 For detailed output descriptions, see [Outputs.md](Outputs.md).
-
-## Best Practices
-
-1. **Always use preprocessing tools** to validate sample names before pipeline execution
-2. **Use absolute paths** in configuration files to avoid path resolution issues
-3. **Monitor resource usage** and adjust SLURM parameters accordingly
-4. **Keep conda cache directory** on fast storage with sufficient space
-5. **Review validation reports** carefully before applying corrections

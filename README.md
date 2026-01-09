@@ -209,7 +209,7 @@ wget https://ftp.ensembl.org/pub/grch37/release-110/fasta/homo_sapiens/dna/Homo_
 gunzip Homo_sapiens.GRCh37.dna.primary_assembly.fa.gz
 ```
 
-### Sample Sheet Preperation 
+### Sample Sheet Preparation  
 
 **Analysis Types:**
 - **Paired Analysis**: Detects differential copy number changes between sample and reference (e.g., somatic variants in clones vs donor)
@@ -572,7 +572,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 - **CNV detection**: Adapted from bcftools/RoH (MIT/Expat License)
 - **Original pipeline**: Based on MPIP CNV Detection (GPL-3.0)
 - **Interactive plots**: Bokeh (BSD 3-Clause License)
-- **Test Dataset**:Source: Illumina 2024 Infinium Global Screening Array v4.0 Used under license from Illumina, Inc. All Rights Reserved.
+- **Test Dataset**: Source: Illumina 2024 Infinium Global Screening Array v4.0 Used under license from Illumina, Inc. All Rights Reserved.
 
 ---
 
