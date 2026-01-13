@@ -30,8 +30,8 @@ results/
 ├── README.html                              # This documentation file
 ├── 0.0_information/                         # Pipeline metadata and logs
 │   ├── 0.1_pipeline_logs/                   # Process-specific log files
-│   │   ├── 5.1_<app_name>_single_logs/
-│   │   └── 5.2_<app_name>_paired_logs/
+│   │   ├── 5.1_KaryoExplorer_single_logs/
+│   │   └── 5.2_KaryoExplorer_paired_logs/
 │   ├── 0.2_versions/                        # Software version information
 │   │   ├── bcftools.version.txt
 │   │   ├── plink.version.txt
@@ -53,9 +53,9 @@ results/
 ├── 4.0_roh_loh_analysis/                    # Runs of Homozygosity & Loss of Heterozygosity
 │   ├── 4.1_roh_loh_single/                  # Single sample ROH/LOH analysis
 │   └── 4.2_roh_loh_paired/                  # Paired sample ROH/LOH analysis
-├── 5.0_<app_name>_preprocessing/            # Data preparation for visualization
-├── 5.1_<app_name>_single/                 # Interactive single sample results
-└── 5.2_<app_name>_paired/                   # Interactive paired sample results
+├── 5.0_KaryoExplorer_preprocessing/         # Data preparation for visualization
+├── 5.1_KaryoExplorer_single/                # Interactive single sample results
+└── 5.2_KaryoExplorer_paired/                # Interactive paired sample results
 ```
 
 ---
@@ -67,7 +67,7 @@ results/
 The pipeline generates comprehensive outputs organized across multiple directories, but the **main interactive results** you'll want to access are:
 
 ### For Single Sample Analysis:
-Navigate to **`5.1_<app_name>_single/`** and open `<app_name>.html` in your web browser (Chrome recommended).
+Navigate to **`5.1_KaryoExplorer_single/`** and open `KaryoExplorer.html` in your web browser (Chrome recommended).
 
 **What you'll find:**
 
@@ -80,7 +80,7 @@ Navigate to **`5.1_<app_name>_single/`** and open `<app_name>.html` in your web 
 - All analysis results combined into an easy-to-navigate interface
 
 ### For Paired Sample Analysis:
-Navigate to **`5.2_<app_name>_paired/`** and open `<app_name>.html` in your web browser (Chrome recommended).
+Navigate to **`5.2_KaryoExplorer_paired/`** and open `KaryoExplorer.html` in your web browser (Chrome recommended).
 
 **What you'll find:**
 
@@ -108,8 +108,8 @@ Contains all pipeline execution information, logs, and software versions.
 #### 0.1_pipeline_logs
 - **Purpose**: Process-specific log files for debugging and tracking
 - **Subdirectories**:
-  - `5.1_<app_name>_single_logs/`: Logs from single sample visualization
-  - `5.2_<app_name>_paired_logs/`: Logs from paired sample visualization
+  - `5.1_KaryoExplorer_single_logs/`: Logs from single sample visualization
+  - `5.2_KaryoExplorer_paired_logs/`: Logs from paired sample visualization
 
 #### 0.2_versions
 - **Purpose**: Software version tracking for reproducibility
@@ -223,7 +223,7 @@ ROH and LOH detection using bcftools algorithm, with overlap analysis between CN
 
 ---
 
-### 5.0_<app_name>_preprocessing
+### 5.0_KaryoExplorer_preprocessing
 
 Standardized data collection and formatting for interactive visualization.
 
@@ -272,14 +272,14 @@ Standardized data collection and formatting for interactive visualization.
 
 ---
 
-### 5.1_<app_name>_single - Interactive single Sample Results
+### 5.1_KaryoExplorer_single - Interactive single Sample Results
 
 **This is your main result for single sample analysis!**
 
 **Purpose**: Interactive HTML-based visualization for exploring CNV and ROH patterns in individual samples.
 
 **How to Access**:
-1. Open `<app_name>.html` in a web browser (Chrome recommended)
+1. Open `KaryoExplorer.html` in a web browser (Chrome recommended)
 2. Click the **ℹ** (info) icon for detailed usage instructions
 3. Navigate through samples and chromosomes using the interactive interface
 
@@ -300,14 +300,14 @@ Standardized data collection and formatting for interactive visualization.
 
 ---
 
-### 5.2_<app_name>_paired - Interactive Paired Sample Results
+### 5.2_KaryoExplorer_paired - Interactive Paired Sample Results
 
 **This is your main result for paired sample analysis!**
 
 **Purpose**: Interactive HTML-based visualization for exploring differential CNV and ROH patterns between PRE and POST samples.
 
 **How to Access**:
-1. Open `<app_name>.html` in a web browser (Chrome recommended)
+1. Open `KaryoExplorer.html` in a web browser (Chrome recommended)
 2. Click the **ℹ** (info) icon for detailed usage instructions
 3. Explore differential patterns between sample pairs
 
@@ -358,23 +358,23 @@ Standardized data collection and formatting for interactive visualization.
 2. Data Preprocessing (`2.0_preprocess/`)
 3. Sample Annotation (`3.0_sample_annotation/`)
 4. ROH/LOH Analysis (`4.0_roh_loh_analysis/4.1_roh_loh_single/`)
-5. Data Preparation (`5.0_<app_name>_preprocessing/`)
-6. **Interactive Results** (`5.1_<app_name>_single/`)
+5. Data Preparation (`5.0_KaryoExplorer_preprocessing/`)
+6. **Interactive Results** (`5.1_KaryoExplorer_single/`)
 
 ### Paired Mode Workflow
 1. Quality Control (`1.0_quality_control/`)
 2. Data Preprocessing (`2.0_preprocess/`)
 3. Sample Annotation (`3.0_sample_annotation/`)
 4. ROH/LOH Analysis (`4.0_roh_loh_analysis/4.2_roh_loh_paired/`)
-5. Data Preparation (`5.0_<app_name>_preprocessing/`)
-6. **Interactive Results** (`5.2_<app_name>_paired/`)
+5. Data Preparation (`5.0_KaryoExplorer_preprocessing/`)
+6. **Interactive Results** (`5.2_KaryoExplorer_paired/`)
 
 ---
 
 ## Usage Tips
 
 ### Accessing Results
-- **Quick Start**: Open the main `README.html` (this file) for an overview, then navigate to `5.1_<app_name>_single/` or `5.2_<app_name>_paired/` for interactive results
+- **Quick Start**: Open the main `README.html` (this file) for an overview, then navigate to `5.1_KaryoExplorer_single/` or `5.2_KaryoExplorer_paired/` for interactive results
 - **Browser Compatibility**: Chrome is recommended for best performance
 - **File Integrity**: Do not move HTML files outside their directories; they depend on relative paths to `components/` and `samples/` folders
 
