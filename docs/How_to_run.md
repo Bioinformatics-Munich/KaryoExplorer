@@ -90,8 +90,8 @@ Donor_material2 Donor_material2    # Single: analyze Donor_material2 independent
 ### 1. Create Project Directory
 
 ```bash
-mkdir my_project_ID  # e.g., P25001
-cd my_project_ID
+mkdir my_project
+cd my_project
 ```
 
 ### 2. Clone Repository
@@ -117,7 +117,7 @@ PAR: /path/to/PAR_Coord_GRCh38.txt
 fasta: /path/to/Homo_sapiens.GRCh38.dna.primary_assembly.fa
 
 # Project Information
-project_ID: 'YOUR_PROJECT_ID'
+project_ID: 'YOUR_PROJECT'
 responsible_person: 'Name_of_the_requester'
 
 # Input Files
@@ -256,7 +256,7 @@ my_project_ID/                                 # Main project directory (e.g., P
 │   └── reference_genome/                      # Reference genome files
 │       ├── Homo_sapiens.GRCh38.dna.primary_assembly.fa     # Reference FASTA
 │       └── Homo_sapiens.GRCh38.dna.primary_assembly.fa.fai # FASTA index
-├── KaryoExplorer/              # Pipeline directory (cloned repository)
+├── KaryoExplorer/                             # Pipeline directory (cloned repository)
 │   ├── main.nf                                # Main Nextflow workflow
 │   ├── nextflow.config                        # Pipeline configuration
 │   ├── params.yaml                            # Project-specific parameters (copied from template)
@@ -288,7 +288,7 @@ my_project_ID/                                 # Main project directory (e.g., P
     ├── 3.0_sample_annotation/                 # Sample annotations
     ├── 4.0_roh_loh_analysis/                  # ROH/LOH analysis results
     ├── 5.0_<app_name>_preprocessing/          # Visualization data preparation (app_name: configurable)
-    ├── 5.1_<app_name>_single/               # Interactive single sample results
+    ├── 5.1_<app_name>_single/                 # Interactive single sample results
     └── 5.2_<app_name>_paired/                 # Interactive paired sample results
 ```
 
@@ -315,7 +315,7 @@ results/
 ├── README.html                              # This documentation file
 ├── 0.0_information/                         # Pipeline metadata and logs
 │   ├── 0.1_pipeline_logs/                   # Process-specific log files
-│   │   ├── 5.1_<app_name>_single_logs/    # single analysis logs
+│   │   ├── 5.1_<app_name>_single_logs/      # single analysis logs
 │   │   └── 5.2_<app_name>_paired_logs/      # Paired analysis logs
 │   ├── 0.2_versions/                        # Software version information
 │   │   ├── bcftools.version.txt
@@ -339,7 +339,7 @@ results/
 │   ├── 4.1_roh_loh_single/                  # Single sample ROH/LOH analysis
 │   └── 4.2_roh_loh_paired/                  # Paired sample ROH/LOH analysis
 ├── 5.0_<app_name>_preprocessing/            # Data preparation for visualization (configurable)
-├── 5.1_<app_name>_single/                 # Interactive single sample results (configurable)
+├── 5.1_<app_name>_single/                   # Interactive single sample results (configurable)
 └── 5.2_<app_name>_paired/                   # Interactive paired sample results (configurable)
 ```
 
@@ -349,30 +349,6 @@ results/
 ## Pipeline Customization Options
 
 The pipeline offers several customization options to personalize the output and branding for your organization.
-
-### Application Naming and Branding
-
-Customize the application name and output folder structure by editing `nextflow.config`:
-
-```groovy
-params {
-  app_name = 'KaryoExplorer'  // Default: 'KaryoExplorer'
-}
-```
-
-**Impact:**
-- The application name appears in the **HTML page title** (e.g., `KaryoExplorer.html`)
-- **Output folder names** are dynamically generated:
-  - `5.0_<app_name>_preprocessing/`
-  - `5.1_<app_name>_single/`
-  - `5.2_<app_name>_paired/`
-- Application name is displayed in the **footer** of all HTML pages
-
-**Example:**
-```groovy
-app_name = 'MyCustomAnalyzer'
-```
-This generates folders: `5.0_MyCustomAnalyzer_preprocessing/`, `5.1_MyCustomAnalyzer_single/`, etc.
 
 ### Contact Information Customization
 
