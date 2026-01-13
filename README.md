@@ -325,11 +325,11 @@ results/
 ├── 4.0_roh_loh_analysis/                    # ROH/LoH detection
 │   ├── 4.1_roh_loh_single/                  # Single sample results
 │   └── 4.2_roh_loh_paired/                  # Paired sample results
-├── 5.0_KaryoExplorer_preprocessing/       # Data for visualization
-├── 5.1_KaryoExplorer_single/            # Interactive single results
-│   └── KaryoExplorer.html                 # Main application (single)
-└── 5.2_KaryoExplorer_paired/              # Interactive paired results
-    └── KaryoExplorer.html                 # Main application (paired)
+├── 5.0_KaryoExplorer_preprocessing/         # Data for visualization
+├── 5.1_KaryoExplorer_single/                # Interactive single results
+│   └── KaryoExplorer.html                   # Main application (single)
+└── 5.2_KaryoExplorer_paired/                # Interactive paired results
+    └── KaryoExplorer.html                   # Main application (paired)
 ```
 
 ### Accessing Interactive Results
@@ -431,6 +431,7 @@ nextflow run main.nf -params-file templates/demo_params.yaml -profile docker
 **Assuming -resume for cached preprocessing steps; first run may take longer for VCF preprocessing (around + 20 mins, rest of the steps are parallelized)
 
 ***Peak memory per parallel task; total cluster allocation depends on concurrent tasks
+
 ---
 
 ## Documentation
