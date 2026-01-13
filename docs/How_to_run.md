@@ -287,9 +287,9 @@ my_project_ID/                                 # Main project directory (e.g., P
     ├── 2.0_preprocess/                        # Data preprocessing outputs
     ├── 3.0_sample_annotation/                 # Sample annotations
     ├── 4.0_roh_loh_analysis/                  # ROH/LOH analysis results
-    ├── 5.0_<app_name>_preprocessing/          # Visualization data preparation (app_name: configurable)
-    ├── 5.1_<app_name>_single/                 # Interactive single sample results
-    └── 5.2_<app_name>_paired/                 # Interactive paired sample results
+    ├── 5.0_KaryoExplorer_preprocessing/       # Visualization data preparation (app_name: configurable)
+    ├── 5.1_KaryoExplorer_single/              # Interactive single sample results
+    └── 5.2_KaryoExplorer_paired/              # Interactive paired sample results
 ```
 
 ### Key Input File Requirements
@@ -315,8 +315,8 @@ results/
 ├── README.html                              # This documentation file
 ├── 0.0_information/                         # Pipeline metadata and logs
 │   ├── 0.1_pipeline_logs/                   # Process-specific log files
-│   │   ├── 5.1_<app_name>_single_logs/      # single analysis logs
-│   │   └── 5.2_<app_name>_paired_logs/      # Paired analysis logs
+│   │   ├── 5.1_KaryoExplorer_single_logs/      # single analysis logs
+│   │   └── 5.2_KaryoExplorer_paired_logs/      # Paired analysis logs
 │   ├── 0.2_versions/                        # Software version information
 │   │   ├── bcftools.version.txt
 │   │   ├── plink.version.txt
@@ -338,9 +338,9 @@ results/
 ├── 4.0_roh_loh_analysis/                    # Runs of Homozygosity & Loss of Heterozygosity
 │   ├── 4.1_roh_loh_single/                  # Single sample ROH/LOH analysis
 │   └── 4.2_roh_loh_paired/                  # Paired sample ROH/LOH analysis
-├── 5.0_<app_name>_preprocessing/            # Data preparation for visualization (configurable)
-├── 5.1_<app_name>_single/                   # Interactive single sample results (configurable)
-└── 5.2_<app_name>_paired/                   # Interactive paired sample results (configurable)
+├── 5.0_KaryoExplorer_preprocessing/            # Data preparation for visualization (configurable)
+├── 5.1_KaryoExplorer_single/                   # Interactive single sample results (configurable)
+└── 5.2_KaryoExplorer_paired/                   # Interactive paired sample results (configurable)
 ```
 
 ---
