@@ -6,11 +6,11 @@ Reference datasets and coordinate files required for genomic analysis.
 
 ```
 datasets/
-├── PAR/                    # Pseudoautosomal Region coordinates
+├── PAR/                       # Pseudoautosomal Region coordinates
 │   ├── PAR_Coord_GRCh37.txt   # PAR coordinates for GRCh37/hg19 reference
 │   └── PAR_Coord_GRCh38.txt   # PAR coordinates for GRCh38/hg38 reference
-└── demo/                   # Illumina demo dataset (tracked via Git LFS)
-    └── [demo dataset files]  # See demo/README.md for details
+└── demo/                      # Illumina demo dataset (tracked via Git LFS)
+    └── [demo dataset files]   # See demo/README.md for details
 ```
 
 ## Demo Dataset
