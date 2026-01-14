@@ -398,5 +398,5 @@ Standardized data collection and formatting for interactive visualization.
 
 ---
 
-**Pipeline Version**: 2.0  
+**Pipeline Version**: 1.0  
 **Last Updated**: 2025
