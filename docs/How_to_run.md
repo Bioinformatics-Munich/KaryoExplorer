@@ -377,7 +377,6 @@ name_analyst    = ''
 ```
 
 **Footer Display:**
-- Helmholtz email appears with a clickable envelope icon
 - If analyst name is provided: "Analysis done by: [Name] (email)"
 - Analyst information helps recipients contact the person who performed the analysis
 
