@@ -150,8 +150,7 @@ KaryoExplorer/
 │   └── renv.yaml           # R environment
 │
 ├── templates/              # Configuration templates
-│   ├── params.yaml         # Parameter template
-│   └── submit.sbatch       # SLURM submission template
+│   └── params.yaml         # Parameter template
 │
 ├── docs/                   # Documentation
 │   ├── How_to_run.md       # Installation and usage guide
