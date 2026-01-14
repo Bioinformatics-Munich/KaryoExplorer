@@ -19,7 +19,7 @@ This guide provides step-by-step instructions for setting up and running the Dig
 ### Supported Platforms
 
 
-- **HPC Clusters** - SLURM configuration included 
+- **HPC Clusters** - Compatible with SLURM, PBS, SGE, LSF, and other resource managers
 
 - **Linux** (x86_64) 
 
@@ -131,53 +131,45 @@ gsplink: /path/to/PLINK_files_directory
 
 ## Running the Pipeline
 
-### SLURM Cluster Execution (Recommended)
+### HPC Cluster Execution (Recommended)
 
-The pipeline is optimized for SLURM-based cluster execution with parallelized resource management and job scheduling.
+The pipeline is optimized for HPC cluster execution with parallelized resource management and job scheduling. It is compatible with various resource managers including SLURM, PBS, SGE, and LSF.
 
-**Step 1: Prepare SLURM Submission Script**
+**Step 1: Prepare Submission Script**
+
+Create a submission script based on your HPC cluster's resource manager and requirements. The script should:
+- Set appropriate resource limits (memory, time, CPUs)
+- Define environment variables for Nextflow
+- Execute the pipeline with the desired profile
+- Include cleanup commands for temporary files
+
+**Step 2: Configure Nextflow Execution**
+
+Your submission script should execute Nextflow with appropriate parameters:
 
 ```bash
-cp templates/submit.sbatch .
+nextflow run main.nf \
+    -params-file params.yaml \
+    --outdir results \
+    -profile <your_profile> \
+    -resume
 ```
 
-**Step 2: Customize SLURM Parameters**
-
-Edit `submit.sbatch` to match your cluster configuration:
-
-```bash
-#!/bin/bash
-#SBATCH -o KaryoExplorer.log
-#SBATCH -e KaryoExplorer.err
-#SBATCH --job-name=KaryoExplorer
-#SBATCH --mem=16G                    
-#SBATCH -t 06:00:00                 
-#SBATCH --partition=<partition_name>
-#SBATCH --qos=<qos_name>
-#SBATCH --nodes=1
-#SBATCH --ntasks=1
-```
+Available profiles:
+- `docker` - For Docker-based execution
+- `conda` - For Conda environment management
+- `slurm` - For SLURM clusters with specific configurations
+- Custom profiles can be defined in `nextflow.config`
 
 **Step 3: Submit Job**
 
-```bash
-sbatch submit.sbatch
-```
-
-**Key Features of SLURM Execution:**
-- **Optimized scratch directory management** (`/lustre/scratch/users/${USER}/${PROJECT_ID}`)
-- **Conda environment caching** for faster subsequent runs
-- **Logging** with SLURM separate stdout/stderr files
-- **Resource cleanup** after completion
+Submit your job using the appropriate command for your resource manager (e.g., `sbatch`, `qsub`, `bsub`).
 
 ### Local Execution (Optional)
 
 For testing or small datasets, you can run the pipeline locally:
 
 ```bash
-export NXF_VER=24.10.4
-export NXF_CONDA_CACHEDIR=/path/to/conda/cache
-
 nextflow run main.nf \
     -params-file params.yaml \
     --outdir results \
@@ -187,12 +179,12 @@ nextflow run main.nf \
 
 ## Environment Variables
 
-Key environment variables (automatically set in SLURM template):
+Key environment variables (recommended to be set in your HPC submission script for optimal execution):
 
 - **`NXF_VER`**: Nextflow version (e.g., "24.10.4")
 - **`NXF_CONDA_CACHEDIR`**: Directory for conda environments
 - **`NXF_WORK`**: Scratch directory for temporary files
-- **`NXF_SINGULARITY_CACHEDIR`**: Directory for Singularity/Apptainer images
+- **`NXF_SINGULARITY_CACHEDIR`**: Directory for Singularity/Apptainer images (if using containers)
 - **`TMPDIR`**: Temporary directory for processing
 
 
@@ -201,8 +193,16 @@ Key environment variables (automatically set in SLURM template):
 ### Monitor Job Progress
 
 ```bash
-# Check SLURM job status
+# Check job status (adjust command for your resource manager)
+
+# SLURM:
 squeue -u $USER
+# PBS:
+qstat -u $USER
+# SGE:
+qstat -u $USER
+# LSF:
+bjobs -u $USER
 
 # View real-time logs
 tail -f KaryoExplorer.log
@@ -216,7 +216,8 @@ nextflow log
 
 ```bash
 # Resume from last successful checkpoint
-sbatch submit.sbatch  # SLURM will automatically resume with -resume flag
+# Submit your job again - Nextflow will automatically resume with -resume flag
+# The specific command depends on your resource manager (sbatch, qsub, bsub, etc.)
 ```
 
 ## Common Issues and Solutions
@@ -233,9 +234,9 @@ sbatch submit.sbatch  # SLURM will automatically resume with -resume flag
 - **Issue**: Conda cache directory full or inaccessible
 - **Solution**: Ensure sufficient space in `NXF_CONDA_CACHEDIR` or you have correct ACL permissions to the directory. 
 
-### 5. Scratch Directory Cleanup
+### 4. Scratch Directory Cleanup
 - **Issue**: Scratch directory not cleaned after job completion
-- **Solution**: The SLURM template includes automatic cleanup (`rm -rf /lustre/scratch/users/${USER}/${PROJECT_ID}`)
+- **Solution**: Add cleanup commands to your submission script to remove temporary files after pipeline completion
 
 ## Input Structure
 
@@ -260,11 +261,9 @@ my_project_ID/                                 # Main project directory (e.g., P
 │   ├── main.nf                                # Main Nextflow workflow
 │   ├── nextflow.config                        # Pipeline configuration
 │   ├── params.yaml                            # Project-specific parameters (copied from template)
-│   ├── submit.sbatch                          # Project-specific SLURM script (copied from template)
 │   ├── sample_sheet.xls                       # Sample pairing file
 │   ├── templates/                             # Template files
-│   │   ├── params.yaml                        # Parameter template
-│   │   └── submit.sbatch                      # SLURM submission template
+│   │   └── params.yaml                        # Parameter template
 │   ├── logs/                                  # Execution logs (created during run)
 │   │   └── nextflow/                          # Nextflow-specific logs
 │   │       ├── report.html                    # Execution report
@@ -303,7 +302,6 @@ my_project_ID/                                 # Main project directory (e.g., P
 
 **Configuration Files:**
 - **params.yaml**: Project-specific parameter file with all input/output paths
-- **submit.sbatch**: SLURM submission script customized for the HPC cluster environment
  
 
 ## Output Directory Structure

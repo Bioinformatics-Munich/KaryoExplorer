@@ -15,7 +15,9 @@ datasets/
 
 ## Demo Dataset
 
-The Illumina Global Screening Array v4.0 demo dataset is stored in `datasets/demo/` and is tracked using **Git LFS** due to its size (~1.74 GB).
+The Illumina Global Screening Array v4.0 demo dataset is stored in `datasets/demo/` and is tracked using **Git LFS** due to its size (~2 GB).
+
+Source: Illumina 2024 Infinium Global Screening Array v4.0 Used under license from Illumina, Inc. All Rights Reserved.
 
 ### Important Notes
 

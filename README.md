@@ -86,7 +86,7 @@ Digital karyotyping of iPSC lines is widely practiced, but current workflows suf
 ### Reproducibility & Scalability
 - **Containerized execution**: Docker, Singularity/Apptainer support
 - **Workflow management**: Nextflow DSL2 with automatic provenance tracking
-- **HPC-ready**: SLURM configuration and templates with optimized resource allocation
+- **HPC-ready**: Compatible with SLURM, PBS, SGE, LSF, and other resource managers
 - **Version control**: Automatic software version and parameter logging
 
 
@@ -125,7 +125,7 @@ The pipeline is particularly suited for laboratories that:
 ### Supported Platforms
 
 
-- **HPC Clusters** - SLURM configuration included 
+- **HPC Clusters** - Compatible with SLURM, PBS, SGE, LSF, and other resource managers
 
 - **Linux** (x86_64) 
 
@@ -290,12 +290,10 @@ nextflow run main.nf -params-file my_project.yaml -profile conda
 nextflow run main.nf -params-file my_project.yaml -profile docker
 ```
 
-#### HPC Cluster (SLURM)
+#### HPC Cluster
+
 ```bash
-# Copy and edit SLURM template
-cp templates/submit.sbatch my_project.sbatch
-# Edit paths and resources in my_project.sbatch
-sbatch my_project.sbatch
+nextflow run main.nf -params-file params.yaml -profile normal -with-conda 
 ```
 
 ---
@@ -344,6 +342,8 @@ Open `results/5.1_KaryoExplorer_single/KaryoExplorer.html` or `results/5.2_Karyo
 
 KaryoExplorer includes a pre-processed demo dataset from Illumina's Global Screening Array v4.0, stored using Git LFS.
 
+Source: Illumina 2024 Infinium Global Screening Array v4.0 Used under license from Illumina, Inc. All Rights Reserved.
+
 ### Downloading the Demo Dataset
 
 By default, the demo dataset is **not downloaded** during repository only pointers are created under the 'datasets/demo/' directory. The demo data files are tracked with Git LFS and can be optionally downloaded when needed.
@@ -374,6 +374,7 @@ The `datasets/demo/` directory includes:
 - Example sample_sheet.xls and params.yaml file to run the pipeline
 - PLINK format data files (.ped, .map)
 - Full data tables and SNP information
+- README.md file containing further details about the Illumina dataset provided. 
 
 ### Using the Demo Dataset
 
@@ -390,7 +391,7 @@ The `datasets/demo/` directory includes:
 # 1. Download the demo dataset (if not already done)
 git lfs pull --include="datasets/demo/**"
 
-# 2. Copy provided templates and sample sheet provided from datasets directory  to main directory
+# 2. Copy provided templates and sample sheet provided from datasets directory to main directory
 
 cp datasets/demo/sample_sheet.xls ./
 cp datasets/demo/params.yaml
@@ -585,7 +586,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 3. Takahashi, K., & Yamanaka, S. (2006). Induction of pluripotent stem cells from mouse embryonic and adult fibroblast cultures by defined factors. *Cell*, 126(4), 663-676.
 
-4. Hussein, S. M., et al. (2011). Copy number variation and selection during reprogramming to pluripotency. *Nature*, 471(7336), 58-62.
+4. Assou, S., Bouckenheimer, J., & De Vos, J. (2018). Concise review: Assessing the genome integrity of human induced pluripotent stem cells: What quality control metrics? *Stem Cells*, 36(6), 814-821. https://doi.org/10.1002/stem.2797
 
 5. Wang, K., et al. (2007). PennCNV: an integrated hidden Markov model designed for high-resolution copy number variation detection in whole-genome SNP genotyping data. *Genome Research*, 17(11), 1665-1674.
 
