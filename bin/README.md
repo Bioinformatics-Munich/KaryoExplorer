@@ -1,6 +1,6 @@
 # Pipeline Scripts
 
-Core analysis scripts and tools used by the KaryoPlayground pipeline.
+Core analysis scripts and tools used by the KaryoExplorer pipeline.
 
 ## Directory Structure
 

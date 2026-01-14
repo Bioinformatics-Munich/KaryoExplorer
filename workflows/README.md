@@ -1,6 +1,6 @@
 # Workflows
 
-Main workflow orchestration for the KaryoPlayground pipeline.
+Main workflow orchestration for the KaryoExplorer pipeline.
 
 ## Directory Structure
 
