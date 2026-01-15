@@ -17,7 +17,7 @@ This digital karyotyping pipeline detects de novo copy number abnormalities aris
 
 
 **KaryoExplorer** standardizes this workflow into a single, reproducible pipeline that:
-- Performs CNV and LoH analysis from Illumina Infinium genotyping array data
+- Performs CNV and LoH analysis of Illumina Infinium genotyping array data
 - Detects copy-neutral LoH (cnLoH) by overlaying runs of homozygosity with copy number states
 - Generates self-contained, interactive HTML reports with synchronized BAF/LRR/CN visualizations
 - Enables offline browsing with no additional software requirements
@@ -65,7 +65,7 @@ Digital karyotyping of iPSC lines is widely practiced, but current workflows suf
 
 ### Analysis Capabilities
 - **Dual Analysis Modes**: Single-sample and paired (PRE→POST) analysis with differential views
-- **CNV Detection**: Deletions and duplications from BAF/LRR segmentation using bcftools cnv algorithm
+- **CNV Detection**: Deletions and duplications based on BAF/LRR segmentation using bcftools cnv algorithm
 - **LoH Detection**: Runs of homozygosity (ROH) identification using bcftools roh algorithm
 - **cnLoH Classification**: Automatic detection of copy-neutral LoH (CN=2 ∩ ROH) and copy-loss LoH (CN<2 ∩ ROH)
 - **Quality Control**: Detailed QC metrics, IBD analysis, and sample matching
