@@ -394,13 +394,13 @@ git lfs pull --include="datasets/demo/**"
 # 2. Copy provided templates and sample sheet provided from datasets directory to main directory
 
 cp datasets/demo/sample_sheet.xls ./
-cp datasets/demo/params.yaml
+cp datasets/demo/params.yaml ./
 
-# 3. Organize the paths on the params.yaml file for the demo dataset. Using absolute paths are recommended
+# 3. Organize the paths on the params.yaml file for the demo dataset. Using absolute paths are recommended. Ensure you provided GRCh38 Reference Genome path. 
 
 # 4. Run pipeline with demo parameters
-nextflow run main.nf -params-file templates/demo_params.yaml -profile docker
-# or nextflow run main.nf -params-file templates/demo_params.yaml -profile conda
+nextflow run main.nf -params-file params.yaml -profile docker
+# or nextflow run main.nf -params-file params.yaml -profile conda
 ```
 
 **The demo dataset allows you to:**
