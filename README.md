@@ -461,12 +461,11 @@ Comprehensive documentation is available in the `docs/` directory:
 If you use KaryoExplorer in your research, please cite:
 
 ```bibtex
-@article{KaryoExplorer2025,
+@article{KaryoExplorer2026,
   title={KaryoExplorer: An Automated Digital Karyotyping Pipeline with Interactive Visualizations},
-  author={Dura, Ugur and Pastor, Xavier and Walzthoeni, Thomas and Boos, Alena},
-  journal={Journal of Open Source Software},
-  year={2025},
-  publisher={The Open Journal},
+  author={Dura, Ugur and Pastor, Xavier and Lichtner, Peter and Walzthoeni, Thomas and Boos, Alena},
+  year={2026},
+  publisher={Zenodo},
   doi={10.5281/zenodo.18430121}
 }
 ```
