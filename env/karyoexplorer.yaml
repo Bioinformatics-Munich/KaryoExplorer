@@ -4,12 +4,5 @@ channels:
   - bioconda
   - defaults
 dependencies:
-  # Workflow management
-  - nextflow>=24.10.0
-  
-  # Java runtime for Nextflow
-  - openjdk>=11
-  
-  # Conda for environment management (if not already installed system-wide)
-  - conda>=23.0
-
+  - nextflow>=24.10.0,<26
+  - openjdk=17
