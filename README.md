@@ -354,6 +354,9 @@ By default, the demo dataset is **not downloaded** during repository only pointe
 # After cloning the repository
 cd KaryoExplorer
 
+# Ensure gitlfs initialized
+git lfs install 
+
 # Download the demo data (~2 GB)
 git lfs pull --include="datasets/demo/**"
 ```
@@ -387,6 +390,10 @@ The `datasets/demo/` directory includes:
 #Optional based on your setup - Activate Conda Environment
 
 # conda activate karyoexplorer
+
+# ->Ensure gitlfs initialized<-
+
+# git lfs install 
 
 # 1. Download the demo dataset (if not already done)
 git lfs pull --include="datasets/demo/**"
