@@ -23,6 +23,7 @@ process ROH_ANALYSIS_SINGLE {
         pattern: "overlap/${pre_sample}/**"
 
     conda "${baseDir}/env/preproc.yaml"
+    container 'community.wave.seqera.io/library/prepoc:106fc17238d58d76'
     
     input:
         tuple val(sample_id), val(type), val(pre_sample), val(post_sample), path(vcf_baf_lrr)
@@ -137,6 +138,7 @@ process ROH_ANALYSIS_PAIRED {
         pattern: "overlap/${pre_sample}_${post_sample}/**"
 
     conda "${baseDir}/env/preproc.yaml"
+    container 'community.wave.seqera.io/library/prepoc:106fc17238d58d76'
     
     input:
         tuple val(sample_id), val(type), val(pre_sample), val(post_sample), path(vcf_baf_lrr)

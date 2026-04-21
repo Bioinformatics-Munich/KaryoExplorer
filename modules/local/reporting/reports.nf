@@ -162,6 +162,7 @@ process HTML_OUTPUT_DESCRIPTION {
     publishDir "${params.outdir}", mode: 'copy', overwrite: true
 
     conda "${baseDir}/env/pandoc.yaml"
+    container 'community.wave.seqera.io/library/pandoc:1c2e96fd310648e4'
 
     input:
         path r_version

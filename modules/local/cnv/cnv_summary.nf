@@ -16,6 +16,7 @@ process CNV_SUMMARY_SINGLE {
     // publishDir "${params.outdir}/7.2_CNV_single", mode: 'copy', overwrite: true, pattern: "${pre}"
 
     conda "${baseDir}/env/renv.yaml"
+    container 'community.wave.seqera.io/library/renv:8195bdd8f9498417'
 
     input:
         tuple val(sex), val(pre), val(post), path(cnv_dir)
@@ -59,6 +60,7 @@ process CNV_PLOT_SUMMARY {
     // publishDir "${params.outdir}/09_cnv_differential_summary", mode: 'copy', overwrite: true
 
     conda "${baseDir}/env/renv.yaml"
+    container 'community.wave.seqera.io/library/renv:8195bdd8f9498417'
 
     input:
         tuple val(pre), val(post), path(summary_dirs)

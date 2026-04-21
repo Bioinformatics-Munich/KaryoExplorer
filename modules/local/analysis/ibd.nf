@@ -16,6 +16,7 @@ process IBD_ANALYSIS {
     // publishDir "${params.outdir}/3.1_QC", mode: 'copy', overwrite: true
 
     conda "${baseDir}/env/ibd.yaml"
+    container 'community.wave.seqera.io/library/ibd:cf4aacf71deba86a'
 
     input:
         path gsplink
@@ -29,12 +30,27 @@ process IBD_ANALYSIS {
         gsplink && paired_sample_types
 
     script:
-        """
+    def normHyphens = params.normalize_plink_hyphens_to_underscores != false
+    """
+        NH='${normHyphens ? '1' : '0'}'
         echo "[\$(date '+%Y-%m-%d %H:%M:%S')] INFO: Starting IBD analysis"
-        
-        # Run PLINK IBD analysis
+
+        mkdir -p plink_work
+        cp $gsplink/*.ped $gsplink/*.map plink_work/
+        cp $gsplink/*.fam plink_work/ 2>/dev/null || true
+        if [[ "\$NH" == "1" ]]; then
+            echo "[\$(date '+%Y-%m-%d %H:%M:%S')] INFO: Replacing '-' with '_' in PLINK FID/IID (match sample sheet / GenomeStudio sample IDs)"
+            shopt -s nullglob
+            for f in plink_work/*.fam; do
+                awk '{gsub(/-/,"_",\$1); gsub(/-/,"_",\$2); print}' "\$f" > "\$f.tmp" && mv "\$f.tmp" "\$f"
+            done
+            for f in plink_work/*.ped; do
+                awk '{gsub(/-/,"_",\$1); gsub(/-/,"_",\$2); print}' "\$f" > "\$f.tmp" && mv "\$f.tmp" "\$f"
+            done
+        fi
+
         echo "[\$(date '+%Y-%m-%d %H:%M:%S')] INFO: Running PLINK IBD calculation"
-        plink --ped `ls $gsplink/*.ped` --map `ls $gsplink/*.map` --genome --out ibd_results
+        plink --ped \$(ls plink_work/*.ped) --map \$(ls plink_work/*.map) --genome --out ibd_results
         
         # Check if results were generated
         if [[ ! -f "ibd_results.genome" ]]; then
@@ -59,6 +75,7 @@ process SAMPLE_TYPES_SINGLE {
     // publishDir "${params.outdir}/4_samples", mode: 'copy', overwrite: true
 
     conda "${baseDir}/env/preproc.yaml"
+    container 'community.wave.seqera.io/library/prepoc:106fc17238d58d76'
 
     input:
         path samples_manifest
@@ -136,6 +153,7 @@ process SAMPLE_TYPES_PAIRED {
     // publishDir "${params.outdir}/4_samples", mode: 'copy', overwrite: true
 
     conda "${baseDir}/env/preproc.yaml"
+    container 'community.wave.seqera.io/library/prepoc:106fc17238d58d76'
 
     input:
         path samples_manifest

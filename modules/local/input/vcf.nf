@@ -17,6 +17,7 @@ process VCF_CREATE_FROM_PLINK {
     publishDir "${params.outdir}/0.0_information/0.2_versions/", mode: 'copy', overwrite: true, pattern: "plink.version.txt"
 
     conda 'plink=1.90b6.21'
+    container 'community.wave.seqera.io/library/prepoc:106fc17238d58d76'
 
     input:
         path gsplink
@@ -31,12 +32,27 @@ process VCF_CREATE_FROM_PLINK {
         gsplink
 
     script:
-        """
+    def normHyphens = params.normalize_plink_hyphens_to_underscores != false
+    """
+        NH='${normHyphens ? '1' : '0'}'
         echo "[\$(date '+%Y-%m-%d %H:%M:%S')] INFO: Starting PLINK to VCF conversion"
-        
-        # Convert PLINK files to VCF
+
+        mkdir -p plink_work
+        cp $gsplink/*.ped $gsplink/*.map plink_work/
+        cp $gsplink/*.fam plink_work/ 2>/dev/null || true
+        if [[ "\$NH" == "1" ]]; then
+            echo "[\$(date '+%Y-%m-%d %H:%M:%S')] INFO: Replacing '-' with '_' in PLINK FID/IID (match sample sheet / GenomeStudio sample IDs)"
+            shopt -s nullglob
+            for f in plink_work/*.fam; do
+                awk '{gsub(/-/,"_",\$1); gsub(/-/,"_",\$2); print}' "\$f" > "\$f.tmp" && mv "\$f.tmp" "\$f"
+            done
+            for f in plink_work/*.ped; do
+                awk '{gsub(/-/,"_",\$1); gsub(/-/,"_",\$2); print}' "\$f" > "\$f.tmp" && mv "\$f.tmp" "\$f"
+            done
+        fi
+
         echo "[\$(date '+%Y-%m-%d %H:%M:%S')] INFO: Converting PED/MAP files to VCF format"
-        plink --ped `ls $gsplink/*.ped` --map `ls $gsplink/*.map` --recode vcf
+        plink --ped \$(ls plink_work/*.ped) --map \$(ls plink_work/*.map) --recode vcf
         
         # Get PLINK version
         plink --version > plink.version.txt
@@ -116,6 +132,7 @@ process VCF_ANNOTATE_BAF_LRR {
     label 'process_low'
 
     conda "${baseDir}/env/preproc.yaml"
+    container 'community.wave.seqera.io/library/prepoc:106fc17238d58d76'
 
     publishDir "${params.outdir}/2.0_preprocess/2.4_preprocess_vcf", mode: 'copy', overwrite: true
     publishDir "${params.outdir}/0.0_information/0.2_versions/", mode: 'copy', overwrite: true, pattern: "*.version.txt"
@@ -136,7 +153,9 @@ process VCF_ANNOTATE_BAF_LRR {
         fullTable_filt && vcf_corrected && lrr_table && baf_table
 
     script:
-        """
+    def normHyphens = params.normalize_plink_hyphens_to_underscores != false
+    """
+        NH='${normHyphens ? '1' : '0'}'
         echo "[\$(date '+%Y-%m-%d %H:%M:%S')] INFO: Starting VCF annotation with BAF/LRR data"
         
         # Extract QC SNPs
@@ -147,7 +166,13 @@ process VCF_ANNOTATE_BAF_LRR {
         # Remove numeric prefixes from sample names in VCF (PLINK adds 1_, 2_, etc.)
         echo "[\$(date '+%Y-%m-%d %H:%M:%S')] INFO: Removing numeric prefixes from VCF sample names"
         bcftools query -l ${vcf_corrected} > original_samples.txt
-        sed 's/^[0-9]*_//' original_samples.txt > renamed_samples.txt
+        sed 's/^[0-9]*_//' original_samples.txt > stripped_samples.txt
+        if [[ "\$NH" == "1" ]]; then
+            echo "[\$(date '+%Y-%m-%d %H:%M:%S')] INFO: Replacing '-' with '_' in VCF sample names (match sample sheet)"
+            sed 's/-/_/g' stripped_samples.txt > renamed_samples.txt
+        else
+            mv stripped_samples.txt renamed_samples.txt
+        fi
         bcftools reheader -s renamed_samples.txt ${vcf_corrected} > vcf_renamed.vcf
         
         # Filter VCF with QC SNPs

@@ -29,6 +29,7 @@ process DYNAMIC_PLOT_SINGLE {
         pattern: "{all_single_input_files.txt,dynamic_plotting_single.log,processing_summary.txt}"
 
     conda "${baseDir}/env/bokeh.yaml"
+    container 'community.wave.seqera.io/library/bokeh:28ecfa5951811536'
 
     input:
         path sample_types_csv
@@ -112,6 +113,7 @@ process DYNAMIC_PLOT_PAIRED {
         pattern: "{all_paired_input_files.txt,dynamic_plotting_paired.log,processing_summary_paired.txt}"
 
     conda "${baseDir}/env/bokeh.yaml"
+    container 'community.wave.seqera.io/library/bokeh:28ecfa5951811536'
 
     input:
         tuple path(sample_types_single), path(sample_types_paired)

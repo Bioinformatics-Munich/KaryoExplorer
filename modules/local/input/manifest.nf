@@ -16,6 +16,7 @@ process MANIFEST_GET_REF_ALLELE {
     publishDir "${params.outdir}/2.0_preprocess/2.1_manifest_reference", mode: 'copy', overwrite: true
 
     conda "${baseDir}/env/preproc.yaml"
+    container 'community.wave.seqera.io/library/prepoc:106fc17238d58d76'
 
     input:
         path manifest

@@ -16,6 +16,7 @@ process CNV_PLOT_PAIRED {
     // publishDir "${params.outdir}/07_cnv_plots_paired", mode: 'copy', overwrite: true
 
     conda "${baseDir}/env/renv.yaml"
+    container 'community.wave.seqera.io/library/renv:8195bdd8f9498417'
 
     input:
         tuple val(sex), val(pre), val(post), path(cnv_dir), path(summary_dir)
@@ -54,6 +55,7 @@ process CNV_PLOT_SINGLE {
     // publishDir "${params.outdir}/7.3_CNV_plot_single", mode: 'copy', overwrite: true
 
     conda "${baseDir}/env/renv.yaml"
+    container 'community.wave.seqera.io/library/renv:8195bdd8f9498417'
 
     input:
         tuple val(sex), val(pre), val(post), path(cnv_dir), path(summary_dir)
@@ -90,6 +92,7 @@ process LRR_BAF_PLOT_PAIRED {
     // publishDir "${params.outdir}/6.4_LRR_BAF_plots_paired", mode: 'copy', overwrite: true
 
     conda "${baseDir}/env/renv.yaml"
+    container 'community.wave.seqera.io/library/renv:8195bdd8f9498417'
 
     input:
         tuple val(sex), val(pre), val(post), path(cnv_dir), path(summary_dir)
@@ -125,6 +128,7 @@ process LRR_BAF_PLOT_SINGLE {
     // publishDir "${params.outdir}/08_lrr_baf_plots_single", mode: 'copy', overwrite: true
 
     conda "${baseDir}/env/renv.yaml"
+    container 'community.wave.seqera.io/library/renv:8195bdd8f9498417'
 
     input:
         tuple val(sex), val(pre), val(post), path(cnv_dir), path(summary_dir)

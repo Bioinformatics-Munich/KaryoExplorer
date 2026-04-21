@@ -16,6 +16,7 @@ process GT_MATCH_PAIRED_SAMPLES {
     publishDir "${params.outdir}/1.0_quality_control/1.3_paired_matching", mode: 'copy', overwrite: true
 
     conda "${baseDir}/env/renv.yaml"
+    container 'community.wave.seqera.io/library/renv:8195bdd8f9498417'
 
     input:
         path gt_comp
@@ -64,6 +65,7 @@ process GT_MATCH_SINGLE_SAMPLES {
     publishDir "${params.outdir}/1.0_quality_control/1.2_single_matching", mode: 'copy', overwrite: true
 
     conda "${baseDir}/env/renv.yaml"
+    container 'community.wave.seqera.io/library/renv:8195bdd8f9498417'
 
     input:
         path gt_comp
@@ -166,6 +168,7 @@ process GT_CREATE_SAMPLE_ANNOTATION_PAIRED {
     label 'process_low'
 
     conda "${baseDir}/env/renv.yaml"
+    container 'community.wave.seqera.io/library/renv:8195bdd8f9498417'
 
     publishDir "${params.outdir}/3.0_sample_annotation/paired", mode: 'copy', overwrite: true, pattern: "${sample_name_id}_*.tsv"
 
@@ -196,6 +199,7 @@ process GT_CREATE_SAMPLE_ANNOTATION_SINGLE {
     label 'process_low'
 
     conda "${baseDir}/env/renv.yaml"
+    container 'community.wave.seqera.io/library/renv:8195bdd8f9498417'
 
     publishDir "${params.outdir}/3.0_sample_annotation/single", mode: 'copy', overwrite: true, pattern: "${sample_name_id}_*.tsv"
 

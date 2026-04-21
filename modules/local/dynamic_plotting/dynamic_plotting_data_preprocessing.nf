@@ -34,6 +34,7 @@ process DYNAMIC_PLOT_DATA_PREP_SINGLE {
         })
 
     conda "${baseDir}/env/bokeh.yaml"
+    container 'community.wave.seqera.io/library/bokeh:28ecfa5951811536'
 
     input:
         tuple val(sex), val(pre), val(post), 
@@ -120,6 +121,7 @@ process DYNAMIC_PLOT_DATA_PREP_PAIRED {
         })
 
     conda "${baseDir}/env/bokeh.yaml"
+    container 'community.wave.seqera.io/library/bokeh:28ecfa5951811536'
 
     input:
         tuple val(sex), val(pre), val(post),

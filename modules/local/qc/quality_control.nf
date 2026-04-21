@@ -20,6 +20,7 @@ process QC_MAIN_ANALYSIS {
         saveAs: { filename -> filename.replaceFirst("QC_results_flat/", "") }
     
     conda "${baseDir}/env/renv.yaml"
+    container 'community.wave.seqera.io/library/renv:8195bdd8f9498417'
 
     input:
         path manifest
@@ -145,6 +146,7 @@ process QC_PREPARE_ANNOTATION {
     label 'process_low'
 
     conda 'r-argparse'
+    container 'community.wave.seqera.io/library/renv:8195bdd8f9498417'
 
     input:
         path samplesTable

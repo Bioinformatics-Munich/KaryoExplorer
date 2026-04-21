@@ -16,6 +16,7 @@ process LOH_ANALYSIS_SINGLE {
     publishDir "${params.outdir}/12_loh_analysis/single", mode: 'copy', overwrite: true
 
     conda "${baseDir}/env/renv.yaml"
+    container 'community.wave.seqera.io/library/renv:8195bdd8f9498417'
 
     input:
         tuple val(sex), val(pre), path(summary_tab), path(dat_tab), path(cn_tab)
@@ -50,6 +51,7 @@ process LOH_ANALYSIS_PAIRED {
     publishDir "${params.outdir}/12_loh_analysis/paired", mode: 'copy', overwrite: true
 
     conda "${baseDir}/env/renv.yaml"
+    container 'community.wave.seqera.io/library/renv:8195bdd8f9498417'
 
     input:
         tuple val(sex), val(pre), val(post), 

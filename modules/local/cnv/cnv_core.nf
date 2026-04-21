@@ -16,6 +16,7 @@ process CNV_ANALYSIS_PAIRED {
     // publishDir "${params.outdir}/6.1_CNV_analysis", mode: 'copy', overwrite: true, pattern: "outdir_${post}_${pre}"
 
     conda "${baseDir}/env/preproc.yaml"
+    container 'community.wave.seqera.io/library/prepoc:106fc17238d58d76'
 
     input:
         path vcf_baf_lrr
@@ -76,6 +77,7 @@ process CNV_ANALYSIS_SINGLE {
     // publishDir "${params.outdir}/7.1_CNV_analysis_single", mode: 'copy', overwrite: true, pattern: "outdir_${pre}"
 
     conda "${baseDir}/env/preproc.yaml"
+    container 'community.wave.seqera.io/library/prepoc:106fc17238d58d76'
 
     input:
         path vcf_baf_lrr
@@ -133,6 +135,7 @@ process CNV_DIFFERENTIAL_ANALYSIS {
     // publishDir "${params.outdir}/6.2_CNV_differential", mode: 'copy', overwrite: true, pattern: "${post}_${pre}"
 
     conda "${baseDir}/env/renv.yaml"
+    container 'community.wave.seqera.io/library/renv:8195bdd8f9498417'
 
     input:
         tuple val(sex), val(pre), val(post), path(cnv_dir)
