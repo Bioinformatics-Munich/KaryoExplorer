@@ -577,8 +577,8 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ### Third-Party Components
 
-- **CNV detection**: Adapted from bcftools/RoH (MIT/Expat License)
-- **Original pipeline**: Based on MPIP CNV Detection (GPL-3.0)
+- **CNV detection**: Directly called bcftools/RoH and CNV tools (MIT/Expat License)
+- **Original pipeline**: Based on MPIP CNV Detection (MIT License)
 - **Interactive plots**: Bokeh (BSD 3-Clause License)
 - **Test Dataset**: Source: Illumina 2024 Infinium Global Screening Array v4.0 Used under license from Illumina, Inc. All Rights Reserved.
 
